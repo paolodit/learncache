@@ -1,0 +1,14 @@
+node_modules
+dist
+dist-server
+data
+.npm-cache
+.git
+*.log
+*.err
+tools/bin
+personal
+extension/.npm-cache
+extension/.plasmo
+extension/build
+extension/node_modules

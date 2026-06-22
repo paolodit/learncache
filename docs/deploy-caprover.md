@@ -1,0 +1,77 @@
+# Deploy LearnCache To CapRover
+
+This repo includes a `Dockerfile` and `captain-definition` for CapRover.
+
+## App Setup
+
+1. Create a new CapRover app, for example `learncache`.
+2. Point your chosen domain, for example `learncache.example.com`, at the CapRover server.
+3. Add the custom domain in CapRover.
+4. Enable HTTPS with Let's Encrypt.
+5. Enable persistence and add persistent directory `/data`.
+6. Keep the app at one instance.
+
+SQLite is safe for this v1 only as a single-instance app. Do not scale it horizontally unless you migrate the storage layer to Postgres or another shared database.
+
+## Environment
+
+Recommended hosted env:
+
+```dotenv
+APP_PUBLIC_URL=https://learncache.example.com
+DATA_DIR=/data
+API_HOST=0.0.0.0
+API_PORT=80
+AUTH_ENABLED=true
+CLERK_PUBLISHABLE_KEY=pk_...
+CLERK_SECRET_KEY=sk_...
+ALLOWED_EMAILS=you@example.com
+CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTENSION_ID
+AI_TEXT_PROVIDER=openai
+AI_TRANSCRIBE_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+OPENAI_SUMMARY_MODEL=gpt-5.4-mini
+OPENAI_TRANSCRIBE_MODEL=gpt-4o-mini-transcribe
+```
+
+For cheaper summaries, switch `AI_TEXT_PROVIDER` to `openrouter` or `gemini` and set the matching key.
+
+## Deploy
+
+From your machine:
+
+```powershell
+npm install -g caprover
+caprover login
+caprover deploy
+```
+
+Or upload a tarball through the CapRover dashboard.
+
+## What The Container Includes
+
+- Node.js 24 runtime
+- Production frontend in `dist`
+- Production server JS in `dist-server`
+- Drizzle SQL migration files
+- `ffmpeg`
+- Standalone `yt-dlp`
+
+## Backups
+
+Back up `/data`, especially:
+
+- `/data/app.db`
+- `/data/app.db-wal`
+- `/data/app.db-shm`
+- `/data/thumbnails`
+
+Take backups before redeploys, host migrations, or model/provider experiments.
+
+## Smoke Test
+
+1. Visit `https://learncache.example.com/api/health`.
+2. Sign in through the web app.
+3. Paste a captioned YouTube video.
+4. Confirm the item completes and survives a redeploy.
+5. Download ZIP export and confirm it contains `notes.md`, `item.json`, and thumbnail asset.
