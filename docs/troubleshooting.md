@@ -80,10 +80,12 @@ CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTE
 
 The app stores the remote thumbnail URL and attempts to cache a local copy. If caching fails, the UI can still show the remote thumbnail URL. ZIP exports include the local thumbnail only when caching succeeded.
 
-## CapRover Data Disappeared
+## Hosted Data Disappeared
 
-Make sure the app is configured as persistent and `/data` is a persistent directory. Hosted SQLite data should live under:
+Make sure the app is configured with a persistent volume and `/data` is actually mounted there. Hosted SQLite data should live under:
 
 ```dotenv
 DATA_DIR=/data
 ```
+
+On platforms such as CapRover, Coolify, Portainer, or Docker Compose, this usually means checking the volume or persistent-directory settings for the app/container.

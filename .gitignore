@@ -6,6 +6,9 @@ tools/bin/
 .env
 .env.*
 !.env.example
+docker-compose.yml
+docker-compose.*.yml
+!docker-compose.example.yml
 *.log
 *.err
 .npm-cache/

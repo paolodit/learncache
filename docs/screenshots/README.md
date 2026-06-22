@@ -15,4 +15,4 @@ Before committing screenshots, check that they do not show:
 - Real email addresses
 - API keys or Clerk keys
 - Private transcripts, notes, or source URLs
-- Internal CapRover or database details
+- Internal hosting provider or database details

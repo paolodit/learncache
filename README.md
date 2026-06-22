@@ -10,7 +10,7 @@ Paste or share a link, let the app pull captions or transcribe audio, then get s
 It is built for two modes:
 
 - **Private local use:** SQLite in `./data`, no auth, no hosted account required.
-- **Your hosted setup:** CapRover, persistent `/data`, Clerk login, email allowlist, HTTPS, and browser/mobile capture.
+- **Optional self-hosting:** Docker on a single-instance host, persistent `/data`, Clerk login, email allowlist, HTTPS, and browser/mobile capture.
 
 ## Why LearnCache?
 
@@ -33,7 +33,7 @@ Tools like Glasp are useful, but the free tier can be tight if you want private 
 
 - No Notion sync in v1. Exports are Markdown, JSON, and ZIP.
 - No browser extension on Chrome mobile. Mobile uses the PWA/share/paste flow.
-- No multi-user SaaS tenancy. Hosted SQLite is intended for one CapRover instance.
+- No multi-user SaaS tenancy. Hosted SQLite is intended for one app instance with a persistent volume.
 - No DRM, paywall, private feed, or authenticated media bypassing.
 
 ## Quick Start
@@ -86,7 +86,7 @@ AI_TRANSCRIBE_PROVIDER=captions-only
 
 You can also use Gemini for summaries, or local Whisper for transcription. Free tiers and free routers are best-effort and can change, so the docs call out the tradeoffs.
 
-### Hosted On CapRover
+### Hosted With Docker
 
 ```dotenv
 APP_PUBLIC_URL=https://learncache.example.com
@@ -99,7 +99,7 @@ CLERK_SECRET_KEY=sk_...
 ALLOWED_EMAILS=you@example.com
 ```
 
-SQLite works here as long as the CapRover app runs as a single instance and `/data` is persistent.
+SQLite works here as long as the app runs as a single instance and `/data` is persistent. See [docs/deploy-docker.md](docs/deploy-docker.md) for the provider-neutral deployment path.
 
 ## Screenshots
 
@@ -128,7 +128,8 @@ Add screenshots under [docs/screenshots](docs/screenshots) when you are ready, u
 
 - [Local quickstart](docs/local-quickstart.md)
 - [AI providers and cheap/free options](docs/ai-providers.md)
-- [Deploy to CapRover](docs/deploy-caprover.md)
+- [Hosted Docker deployment](docs/deploy-docker.md)
+- [CapRover deployment example](docs/deploy-caprover.md)
 - [Clerk auth](docs/auth-clerk.md)
 - [Desktop Chrome extension](docs/chrome-extension.md)
 - [Mobile capture and PWA sharing](docs/mobile-capture.md)

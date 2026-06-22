@@ -1,6 +1,8 @@
-# Deploy LearnCache To CapRover
+# CapRover Deployment Example
 
-This repo includes a `Dockerfile` and `captain-definition` for CapRover.
+This is a provider-specific example for people who already use CapRover. For the generic hosting path, start with [Deploy LearnCache With Docker](deploy-docker.md).
+
+This repo includes a `Dockerfile` and `captain-definition` that CapRover can deploy directly.
 
 ## App Setup
 
@@ -12,6 +14,8 @@ This repo includes a `Dockerfile` and `captain-definition` for CapRover.
 6. Keep the app at one instance.
 
 SQLite is safe for this v1 only as a single-instance app. Do not scale it horizontally unless you migrate the storage layer to Postgres or another shared database.
+
+Keep personal domains, private emails, and production extension IDs in local notes or private deployment settings, not in public commits.
 
 ## Environment
 
