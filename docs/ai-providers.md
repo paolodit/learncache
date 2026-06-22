@@ -17,6 +17,18 @@ AI_TRANSCRIBE_PROVIDER=captions-only
 
 This processes captioned YouTube videos without paid transcription. If a YouTube video has no captions, or the item is podcast/audio-only, the job fails with a clear message instead of silently spending money.
 
+## Free-ish Summary Links
+
+Useful starting points:
+
+- [OpenRouter keys](https://openrouter.ai/keys)
+- [OpenRouter free router](https://openrouter.ai/docs/guides/routing/routers/free-router)
+- [OpenRouter free variants](https://openrouter.ai/docs/guides/routing/model-variants/free)
+- [Gemini API keys](https://ai.google.dev/gemini-api/docs/api-key)
+- [Gemini pricing and free tier](https://ai.google.dev/gemini-api/docs/pricing)
+
+These services can change quotas, availability, and model lists. Keep the docs links close to the config so users can check the current deal before they paste in a key.
+
 ## OpenAI
 
 ```dotenv

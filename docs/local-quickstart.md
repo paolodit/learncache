@@ -2,7 +2,7 @@
 
 This is the default path: a private app on your own machine, backed by SQLite in `./data`, with no login.
 
-## Install
+## Install On Windows
 
 ```powershell
 npm install
@@ -11,6 +11,27 @@ Copy-Item .env.example .env
 ```
 
 Install `ffmpeg` if you want podcast/audio transcription or YouTube audio fallback. Captioned YouTube videos can work without `ffmpeg` when `AI_TRANSCRIBE_PROVIDER=captions-only`.
+
+## Install On macOS
+
+macOS is not a separate app path. The only difference is how you install the command-line tools:
+
+```bash
+brew install node yt-dlp ffmpeg
+npm install
+cp .env.example .env
+```
+
+If your terminal cannot find `node`, `yt-dlp`, or `ffmpeg` after installing, open a new terminal window. On Apple Silicon Macs, Homebrew usually lives under `/opt/homebrew/bin`.
+
+## Install On Linux
+
+Use your package manager for Node.js 24+, `yt-dlp`, and `ffmpeg`, then:
+
+```bash
+npm install
+cp .env.example .env
+```
 
 ## Configure
 
@@ -26,6 +47,17 @@ AI_TEXT_PROVIDER=openai
 AI_TRANSCRIBE_PROVIDER=captions-only
 OPENAI_API_KEY=
 ```
+
+For a free-ish first run with captioned YouTube:
+
+```dotenv
+AI_TEXT_PROVIDER=openrouter
+OPENROUTER_API_KEY=sk-or-...
+OPENROUTER_TEXT_MODEL=openrouter/free
+AI_TRANSCRIBE_PROVIDER=captions-only
+```
+
+See [AI providers](ai-providers.md) for links to OpenRouter free routing, Gemini keys/pricing, and local Whisper notes.
 
 For full OpenAI transcription and summaries:
 

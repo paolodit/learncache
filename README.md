@@ -38,10 +38,21 @@ Tools like Glasp are useful, but the free tier can be tight if you want private 
 
 ## Quick Start
 
+Windows PowerShell:
+
 ```powershell
 npm install
 npm run tools:install-ytdlp
 Copy-Item .env.example .env
+npm run dev
+```
+
+macOS:
+
+```bash
+brew install node yt-dlp ffmpeg
+npm install
+cp .env.example .env
 npm run dev
 ```
 
@@ -60,6 +71,19 @@ AI_TEXT_PROVIDER=openai
 AI_TRANSCRIBE_PROVIDER=openai
 OPENAI_API_KEY=sk-...
 ```
+
+Mac users do not need a different app path. They just install the media tools with Homebrew instead of the Windows helper script. If `node`, `yt-dlp`, or `ffmpeg` is not found after install, open a fresh terminal so your shell picks up Homebrew's PATH.
+
+## Free-ish AI Options
+
+You can run useful workflows without jumping straight to paid transcription:
+
+- **No transcription spend:** set `AI_TRANSCRIBE_PROVIDER=captions-only` and use captioned YouTube videos.
+- **Free/cheap summaries:** try OpenRouter's [`openrouter/free`](https://openrouter.ai/docs/guides/routing/routers/free-router) router or [`:free` model variants](https://openrouter.ai/docs/guides/routing/model-variants/free).
+- **Gemini summaries:** create a [Gemini API key](https://ai.google.dev/gemini-api/docs/api-key) and check Google's [Gemini API pricing/free-tier page](https://ai.google.dev/gemini-api/docs/pricing).
+- **Free local transcription:** use `AI_TRANSCRIBE_PROVIDER=local-whisper` if you are happy to install and run Whisper locally.
+
+Free model availability, quotas, and rate limits change, so treat these as best-effort paths rather than guarantees. The details live in [AI providers and cheap/free options](docs/ai-providers.md).
 
 ## Configuration Paths
 
@@ -84,7 +108,7 @@ OPENROUTER_TEXT_MODEL=openrouter/free
 AI_TRANSCRIBE_PROVIDER=captions-only
 ```
 
-You can also use Gemini for summaries, or local Whisper for transcription. Free tiers and free routers are best-effort and can change, so the docs call out the tradeoffs.
+You can also use Gemini for summaries, or local Whisper for transcription. Free tiers and free routers are best-effort and can change, so [AI providers and cheap/free options](docs/ai-providers.md) calls out the tradeoffs and key links.
 
 ### Hosted With Docker
 
