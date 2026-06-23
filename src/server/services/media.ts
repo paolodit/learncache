@@ -60,9 +60,13 @@ export async function createTempWorkDir(prefix = "learncache-"): Promise<string>
 
 export async function readYouTubeMetadata(url: string): Promise<{ raw: YtDlpMetadata; metadata: MediaMetadata }> {
   await assertYouTubeTools();
-  const result = await runCommand("yt-dlp", [...ytDlpSharedArgs(), "--dump-single-json", "--skip-download", "--no-warnings", "--no-playlist", url], {
-    maxBuffer: 1024 * 1024 * 50
-  });
+  const result = await runCommand(
+    "yt-dlp",
+    [...ytDlpSharedArgs(), "--ignore-no-formats-error", "--dump-single-json", "--skip-download", "--no-warnings", "--no-playlist", url],
+    {
+      maxBuffer: 1024 * 1024 * 50
+    }
+  );
   const raw = JSON.parse(result.stdout) as YtDlpMetadata;
 
   return {
