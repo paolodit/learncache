@@ -22,7 +22,11 @@ Or install `yt-dlp` globally and make sure it is on `PATH`.
 
 ## YouTube Says "Sign In To Confirm You're Not A Bot"
 
-Hosted servers and VPS IPs can be challenged by YouTube even when the same URL works locally. If you have permission to process the video, export a Netscape-format cookies file from a browser profile you control, store it outside git, and point LearnCache at it:
+Hosted servers and VPS IPs can be challenged by YouTube even when the same URL works locally.
+
+For desktop Chrome users, prefer the LearnCache extension. When you click the popup on an open YouTube video, the extension tries to capture available captions from the browser page and sends the transcript to LearnCache directly. That avoids asking the server to act like a YouTube browser.
+
+Cookie files are a fallback for server-side `yt-dlp`, not the recommended user experience. If you have permission to process the video and still want hosted server extraction, export a Netscape-format cookies file from a browser profile you control, store it outside git, and point LearnCache at it:
 
 ```dotenv
 YTDLP_COOKIES_PATH=/data/youtube-cookies.txt

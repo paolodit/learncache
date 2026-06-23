@@ -1,24 +1,46 @@
 import type { FastifyInstance } from "fastify";
 import path from "node:path";
 import { z } from "zod";
-import type { ItemStatus, SourceType } from "../../shared/types.js";
+import type { ItemStatus, SourceType, TranscriptSegment } from "../../shared/types.js";
 import { itemExportJson, renderItemExportMarkdown } from "../lib/markdown.js";
 import { normalizeCaptureUrl } from "../lib/url.js";
 import { createZip } from "../lib/zip.js";
-import { readCachedThumbnail, removeCachedThumbnail } from "../services/thumbnail.js";
+import { cacheThumbnail, readCachedThumbnail, removeCachedThumbnail } from "../services/thumbnail.js";
 import {
   addLog,
   createItem,
   deleteItem,
   enqueueIngestJob,
+  enqueueSummarizeJob,
   findItemByCanonicalUrl,
   getItemDetail,
   listItems,
-  updateItem
+  updateItem,
+  upsertTranscript
 } from "../db/repository.js";
 
 const createItemSchema = z.object({
   url: z.string().min(1)
+});
+
+const transcriptSegmentSchema = z.object({
+  start: z.number().nonnegative(),
+  end: z.number().nonnegative(),
+  text: z.string().min(1),
+  speaker: z.string().optional()
+});
+
+const importTranscriptSchema = z.object({
+  url: z.string().min(1),
+  title: z.string().optional(),
+  creator: z.string().optional(),
+  durationSeconds: z.number().nonnegative().optional(),
+  thumbnailUrl: z.string().url().optional(),
+  language: z.string().optional(),
+  transcript: z.object({
+    text: z.string().min(1),
+    segments: z.array(transcriptSegmentSchema).optional()
+  })
 });
 
 const listQuerySchema = z.object({
@@ -45,6 +67,60 @@ export async function registerItemRoutes(app: FastifyInstance): Promise<void> {
     enqueueIngestJob(item.id);
     reply.code(201);
     return { item, duplicate: false };
+  });
+
+  app.post("/api/items/import-transcript", async (request, reply) => {
+    const body = importTranscriptSchema.parse(request.body);
+    const normalized = normalizeCaptureUrl(body.url);
+    const existing = findItemByCanonicalUrl(normalized.canonicalUrl);
+    const item =
+      existing ??
+      createItem({
+        url: normalized.originalUrl,
+        canonicalUrl: normalized.canonicalUrl,
+        sourceType: normalized.sourceType
+      });
+
+    updateItem(item.id, {
+      title: body.title ?? item.title,
+      creator: body.creator ?? item.creator,
+      durationSeconds: body.durationSeconds ?? item.durationSeconds,
+      thumbnailUrl: body.thumbnailUrl ?? item.thumbnailUrl,
+      canonicalUrl: normalized.canonicalUrl,
+      sourceType: normalized.sourceType,
+      status: "queued",
+      error: null
+    });
+
+    addLog(item.id, "info", existing ? "Browser transcript refreshed." : "Browser transcript captured.");
+    upsertTranscript({
+      itemId: item.id,
+      source: "youtube_caption",
+      language: body.language ?? null,
+      text: body.transcript.text,
+      segments: normalizeTranscriptSegments(body.transcript.text, body.transcript.segments)
+    });
+    addLog(item.id, "info", "Transcript saved from browser capture.");
+
+    if (body.thumbnailUrl) {
+      try {
+        const cached = await cacheThumbnail(item.id, body.thumbnailUrl);
+        if (cached) {
+          updateItem(item.id, {
+            thumbnailPath: cached.relativePath,
+            thumbnailMimeType: cached.mimeType,
+            thumbnailCachedAt: cached.cachedAt
+          });
+          addLog(item.id, "info", "Thumbnail cached locally.");
+        }
+      } catch (error) {
+        addLog(item.id, "warn", `Thumbnail cache skipped: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+
+    enqueueSummarizeJob(item.id);
+    reply.code(existing ? 200 : 201);
+    return { item: getItemDetail(item.id), duplicate: Boolean(existing), importedTranscript: true };
   });
 
   app.get("/api/items", async (request) => {
@@ -188,4 +264,22 @@ function thumbnailFileName(thumbnailPath: string | null, mimeType: string | null
   if (mimeType === "image/webp") return "thumbnail.webp";
   if (mimeType === "image/gif") return "thumbnail.gif";
   return "thumbnail.jpg";
+}
+
+function normalizeTranscriptSegments(text: string, segments: TranscriptSegment[] | undefined): TranscriptSegment[] {
+  const cleaned = (segments ?? [])
+    .map((segment) => ({
+      ...segment,
+      text: segment.text.trim(),
+      end: Math.max(segment.end, segment.start)
+    }))
+    .filter((segment) => segment.text);
+
+  if (cleaned.length > 0) return cleaned;
+
+  return text
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line, index) => ({ start: index, end: index + 1, text: line }));
 }

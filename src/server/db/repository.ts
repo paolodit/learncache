@@ -454,11 +454,19 @@ export function refreshSearchIndex(itemId: string): void {
 }
 
 export function enqueueIngestJob(itemId: string): void {
+  enqueueJob(itemId, "ingest");
+}
+
+export function enqueueSummarizeJob(itemId: string): void {
+  enqueueJob(itemId, "summarize");
+}
+
+function enqueueJob(itemId: string, type: JobType): void {
   const timestamp = nowMs();
   sqliteRun(
     `INSERT INTO jobs (id, item_id, type, status, attempts, next_run_at, error, created_at, updated_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [createId(), itemId, "ingest", "queued", 0, timestamp, null, timestamp, timestamp]
+    [createId(), itemId, type, "queued", 0, timestamp, null, timestamp, timestamp]
   );
 }
 

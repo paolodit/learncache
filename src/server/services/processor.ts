@@ -4,6 +4,7 @@ import { transcriptText } from "../lib/captions.js";
 import { renderLearningNotesMarkdown } from "../lib/markdown.js";
 import {
   addLog,
+  getItemDetail,
   getItemRow,
   updateItem,
   upsertSummary,
@@ -44,24 +45,34 @@ export async function processItem(itemId: string): Promise<void> {
   upsertTranscript(transcript);
   addLog(itemId, "info", "Transcript saved.");
 
-  const latest = getItemRow(itemId);
+  await summarizeStoredTranscript(itemId);
+}
+
+export async function summarizeStoredTranscript(itemId: string): Promise<void> {
+  const detail = getItemDetail(itemId);
+  if (!detail) throw new Error(`Item ${itemId} no longer exists.`);
+  if (!detail.transcript?.text.trim()) {
+    throw new Error("No transcript is saved for this item.");
+  }
+
+  updateItem(itemId, { status: "processing", error: null });
   const model = summaryModelId();
   addLog(itemId, "info", `Generating learning notes with ${model}.`);
   const notes = await summarizeTranscript({
-    title: latest?.title ?? item.title,
-    creator: latest?.creator ?? item.creator,
-    url: latest?.canonicalUrl ?? item.canonicalUrl,
-    transcript: transcript.text
+    title: detail.title,
+    creator: detail.creator,
+    url: detail.canonicalUrl,
+    transcript: detail.transcript.text
   });
 
   const renderedMarkdown = renderLearningNotesMarkdown({
-    title: latest?.title ?? item.title,
-    creator: latest?.creator ?? item.creator,
-    url: latest?.canonicalUrl ?? item.canonicalUrl,
-    canonicalUrl: latest?.canonicalUrl ?? item.canonicalUrl,
-    thumbnailMarkdownUrl: latest?.thumbnailUrl ?? item.thumbnailUrl,
-    durationSeconds: latest?.durationSeconds ?? item.durationSeconds,
-    sourceType: latest?.sourceType ?? item.sourceType,
+    title: detail.title,
+    creator: detail.creator,
+    url: detail.url,
+    canonicalUrl: detail.canonicalUrl,
+    thumbnailMarkdownUrl: detail.thumbnailUrl,
+    durationSeconds: detail.durationSeconds,
+    sourceType: detail.sourceType,
     status: "complete",
     model,
     notes

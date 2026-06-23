@@ -1,7 +1,7 @@
 export type SourceType = "youtube" | "podcast" | "audio" | "unknown";
 export type ItemStatus = "queued" | "processing" | "complete" | "failed";
 export type JobStatus = "queued" | "running" | "complete" | "failed";
-export type JobType = "ingest";
+export type JobType = "ingest" | "summarize";
 export type TranscriptSource = "youtube_caption" | "audio_transcription";
 export type LogLevel = "info" | "warn" | "error";
 export type AiTextProvider = "openai" | "openrouter" | "gemini";

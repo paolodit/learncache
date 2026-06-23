@@ -24,7 +24,7 @@
     "typescript": "^5.7.2"
   },
   "manifest": {
-    "permissions": ["activeTab", "contextMenus", "storage"],
-    "host_permissions": ["http://127.0.0.1:3000/*", "http://localhost:3000/*"]
+    "permissions": ["activeTab", "contextMenus", "scripting", "storage"],
+    "host_permissions": ["http://127.0.0.1:3000/*", "http://localhost:3000/*", "https://www.youtube.com/*"]
   }
 }

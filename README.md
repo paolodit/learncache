@@ -20,7 +20,8 @@ Tools like Glasp are useful, but the free tier can be tight if you want private 
 
 - Capture YouTube, podcast page, or direct audio URLs.
 - Deduplicate and normalize source links.
-- Fetch YouTube metadata and captions with `yt-dlp`.
+- Capture YouTube captions from the open browser tab with the desktop Chrome extension when available.
+- Fetch YouTube metadata/captions with `yt-dlp` as a local or hosted fallback.
 - Fall back to OpenAI or local Whisper transcription for audio when configured.
 - Generate structured learning notes through OpenAI, OpenRouter, or Gemini.
 - Store everything in SQLite: items, transcripts, summaries, thumbnails, jobs, logs, and FTS search index.
@@ -28,6 +29,7 @@ Tools like Glasp are useful, but the free tier can be tight if you want private 
 - Export Markdown, JSON, or ZIP with `notes.md`, `item.json`, and `assets/thumbnail.*`.
 - Run with no auth locally, or protect hosted installs with Clerk and an email allowlist.
 - Capture from the web UI, `/capture`, PWA share target, or the optional desktop Chrome extension.
+- Avoid YouTube cookie-file setup for normal desktop capture when the open video exposes captions to the browser.
 
 ## What It Does Not Do Yet
 

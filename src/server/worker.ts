@@ -9,7 +9,7 @@ import {
   nowMs,
   updateItem
 } from "./db/repository.js";
-import { processItem } from "./services/processor.js";
+import { processItem, summarizeStoredTranscript } from "./services/processor.js";
 
 let running = false;
 let timer: NodeJS.Timeout | null = null;
@@ -37,7 +37,11 @@ export async function runWorkerTick(): Promise<void> {
 
     markJobRunning(job.id);
     try {
-      await processItem(job.itemId);
+      if (job.type === "summarize") {
+        await summarizeStoredTranscript(job.itemId);
+      } else {
+        await processItem(job.itemId);
+      }
       markJobComplete(job.id);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

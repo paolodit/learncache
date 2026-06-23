@@ -24,15 +24,20 @@ The extension asks for:
 
 - `activeTab` to read the current tab URL from the popup.
 - `contextMenus` to add "Save to LearnCache".
+- `scripting` to read caption metadata from the active YouTube tab after you click the popup button.
 - `storage` for Clerk extension session support.
 - Host permission for your app URL.
+- Host permission for `https://www.youtube.com/*` so the popup can capture captions from the tab you already have open.
 
 Avoid broad host permissions like `<all_urls>` unless you add features that genuinely need them.
 
 ## Capture Paths
 
-- Popup button: sends `POST /api/items` with the current tab URL and Clerk session token.
+- Popup button on YouTube: first tries browser transcript capture. If YouTube exposes caption tracks to the open page, the extension sends title, thumbnail, timestamped transcript, and source URL to `POST /api/items/import-transcript`. LearnCache then summarizes the saved transcript without server-side `yt-dlp`.
+- Popup button elsewhere, or YouTube with no visible captions: falls back to `POST /api/items` with the current tab URL and Clerk session token.
 - Context menu: opens `https://learncache.example.com/capture?url=...` as a safe fallback.
+
+This is the preferred hosted workflow because the browser is already signed into YouTube. The server-side `yt-dlp` path remains useful for local installs, caption checks, podcasts, direct audio, and fallback processing, but users should not need to copy YouTube cookies for normal desktop capture.
 
 ## Production Checklist
 
