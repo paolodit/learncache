@@ -7,6 +7,7 @@ import { pipeline } from "node:stream/promises";
 import type { TranscriptSegment } from "../../shared/types.js";
 import { parseCaptionText, transcriptText } from "../lib/captions.js";
 import { extensionFromPath } from "../lib/url.js";
+import { config } from "../config.js";
 import { assertCommand, runCommand } from "./command.js";
 
 const AUDIO_INSTALL_HINT = "Install ffmpeg globally or place ffmpeg.exe in tools/bin before processing audio.";
@@ -59,7 +60,7 @@ export async function createTempWorkDir(prefix = "learncache-"): Promise<string>
 
 export async function readYouTubeMetadata(url: string): Promise<{ raw: YtDlpMetadata; metadata: MediaMetadata }> {
   await assertYouTubeTools();
-  const result = await runCommand("yt-dlp", ["--dump-single-json", "--skip-download", "--no-warnings", "--no-playlist", url], {
+  const result = await runCommand("yt-dlp", [...ytDlpSharedArgs(), "--dump-single-json", "--skip-download", "--no-warnings", "--no-playlist", url], {
     maxBuffer: 1024 * 1024 * 50
   });
   const raw = JSON.parse(result.stdout) as YtDlpMetadata;
@@ -112,6 +113,7 @@ export async function downloadYouTubeAudio(url: string, workDir: string): Promis
       "--audio-quality",
       "5",
       "--no-playlist",
+      ...ytDlpSharedArgs(),
       "-o",
       outputPattern,
       url
@@ -214,6 +216,11 @@ export async function chunkAudioForOpenAI(inputPath: string, workDir: string): P
 
 export async function removeWorkDir(workDir: string): Promise<void> {
   await fsp.rm(workDir, { recursive: true, force: true });
+}
+
+function ytDlpSharedArgs(): string[] {
+  const cookiesPath = config.ytdlpCookiesPath.trim();
+  return cookiesPath ? ["--cookies", cookiesPath] : [];
 }
 
 function selectCaptionTrack(groups: Record<string, CaptionTrack[]> | undefined): { language: string; track: CaptionTrack } | null {

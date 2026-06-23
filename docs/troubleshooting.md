@@ -20,6 +20,16 @@ npm run tools:install-ytdlp
 
 Or install `yt-dlp` globally and make sure it is on `PATH`.
 
+## YouTube Says "Sign In To Confirm You're Not A Bot"
+
+Hosted servers and VPS IPs can be challenged by YouTube even when the same URL works locally. If you have permission to process the video, export a Netscape-format cookies file from a browser profile you control, store it outside git, and point LearnCache at it:
+
+```dotenv
+YTDLP_COOKIES_PATH=/data/youtube-cookies.txt
+```
+
+In CapRover, `/data` should be a persistent directory. Copy the file into the running container's `/data` volume and then Save & Restart the app. Treat the cookies file like a password.
+
 ## `ffmpeg` Is Missing
 
 Install `ffmpeg` globally or place `ffmpeg.exe` in `tools/bin`.

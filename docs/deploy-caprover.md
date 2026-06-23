@@ -36,9 +36,18 @@ AI_TRANSCRIBE_PROVIDER=openai
 OPENAI_API_KEY=sk-...
 OPENAI_SUMMARY_MODEL=gpt-5.4-mini
 OPENAI_TRANSCRIBE_MODEL=gpt-4o-mini-transcribe
+YTDLP_COOKIES_PATH=
 ```
 
 For cheaper summaries, switch `AI_TEXT_PROVIDER` to `openrouter` or `gemini` and set the matching key.
+
+If YouTube challenges the VPS with "Sign in to confirm you're not a bot", export a Netscape-format YouTube cookies file from a browser profile you control, copy it into the persistent `/data` directory, and set:
+
+```dotenv
+YTDLP_COOKIES_PATH=/data/youtube-cookies.txt
+```
+
+Treat this file like a password. Do not commit it, paste it into issues, or include it in screenshots.
 
 ## Deploy
 

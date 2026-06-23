@@ -49,6 +49,7 @@ docker run -d \
   -e AI_TEXT_PROVIDER=openai \
   -e AI_TRANSCRIBE_PROVIDER=openai \
   -e OPENAI_API_KEY=sk-... \
+  -e YTDLP_COOKIES_PATH=/data/youtube-cookies.txt \
   learncache:latest
 ```
 
@@ -86,6 +87,7 @@ CLERK_PUBLISHABLE_KEY=pk_...
 CLERK_SECRET_KEY=sk_...
 ALLOWED_EMAILS=you@example.com
 CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTENSION_ID
+YTDLP_COOKIES_PATH=
 ```
 
 Then choose AI providers:
@@ -97,6 +99,16 @@ OPENAI_API_KEY=sk-...
 ```
 
 For lower-cost setups, use OpenRouter or Gemini for summaries and `captions-only` or `local-whisper` for transcription. See [AI providers](ai-providers.md).
+
+## YouTube Bot Checks
+
+Cloud/VPS IPs are more likely to hit YouTube's "Sign in to confirm you're not a bot" challenge. LearnCache supports a persistent yt-dlp cookies file:
+
+```dotenv
+YTDLP_COOKIES_PATH=/data/youtube-cookies.txt
+```
+
+Export cookies in Netscape format from a browser account you control, copy the file into the mounted `/data` volume, and restart the app. Cookies can grant access to your account, so use a low-risk account, keep the file private, and rotate/delete it if it leaks.
 
 ## Backups
 

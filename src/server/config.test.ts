@@ -11,6 +11,7 @@ describe("envSchema", () => {
     expect(parsed.AI_TEXT_PROVIDER).toBe("openrouter");
     expect(parsed.AI_TRANSCRIBE_PROVIDER).toBe("captions-only");
     expect(parsed.OPENROUTER_TEXT_MODEL).toBe("openrouter/free");
+    expect(parsed.YTDLP_COOKIES_PATH).toBe("");
   });
 
   it("rejects unsupported provider modes", () => {
