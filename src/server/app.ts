@@ -24,10 +24,7 @@ export async function buildApp() {
 
     await app.register(clerkPlugin, {
       publishableKey: config.clerkPublishableKey,
-      secretKey: config.clerkSecretKey,
-      frontendApiProxy: {
-        enabled: true
-      }
+      secretKey: config.clerkSecretKey
     });
   }
 
