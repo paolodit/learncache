@@ -20,14 +20,18 @@ export function setAuthTokenProvider(provider: (() => Promise<string | null>) | 
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const token = tokenProvider ? await tokenProvider() : null;
+  const headers = new Headers(options?.headers);
+  if (options?.body !== undefined && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+  const { headers: _headers, ...requestOptions } = options ?? {};
   const response = await fetch(url, {
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options?.headers ?? {})
-    },
-    ...options
+    ...requestOptions,
+    headers
   });
 
   if (!response.ok) {
