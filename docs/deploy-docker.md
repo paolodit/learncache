@@ -48,7 +48,9 @@ docker run -d \
   -e ALLOWED_EMAILS=you@example.com \
   -e AI_TEXT_PROVIDER=openai \
   -e AI_TRANSCRIBE_PROVIDER=openai \
+  -e YOUTUBE_TRANSCRIPT_PROVIDER=auto \
   -e OPENAI_API_KEY=sk-... \
+  -e SUPADATA_API_KEY= \
   -e YTDLP_COOKIES_PATH=/data/youtube-cookies.txt \
   learncache:latest
 ```
@@ -95,14 +97,26 @@ Then choose AI providers:
 ```dotenv
 AI_TEXT_PROVIDER=openai
 AI_TRANSCRIBE_PROVIDER=openai
+YOUTUBE_TRANSCRIPT_PROVIDER=auto
 OPENAI_API_KEY=sk-...
+SUPADATA_API_KEY=
+SUPADATA_TRANSCRIPT_MODE=native
+SUPADATA_LANG=en
 ```
 
-For lower-cost setups, use OpenRouter or Gemini for summaries and `captions-only` or `local-whisper` for transcription. See [AI providers](ai-providers.md).
+For lower-cost setups, use OpenRouter or Gemini for summaries, Supadata for hosted YouTube transcript fallback, and `captions-only` or `local-whisper` for transcription. See [AI providers](ai-providers.md).
 
 ## YouTube Bot Checks
 
-Cloud/VPS IPs are more likely to hit YouTube's "Sign in to confirm you're not a bot" challenge. LearnCache supports a persistent yt-dlp cookies file:
+Cloud/VPS IPs are more likely to hit YouTube's "Sign in to confirm you're not a bot" challenge. Prefer the desktop extension for browser capture, or configure Supadata for hosted paste/share capture:
+
+```dotenv
+YOUTUBE_TRANSCRIPT_PROVIDER=auto
+SUPADATA_API_KEY=...
+SUPADATA_TRANSCRIPT_MODE=native
+```
+
+LearnCache also supports a persistent yt-dlp cookies file as a lower-level fallback:
 
 ```dotenv
 YTDLP_COOKIES_PATH=/data/youtube-cookies.txt

@@ -7,11 +7,14 @@ dotenv.config();
 
 export const textProviderSchema = z.enum(["openai", "openrouter", "gemini"]);
 export const transcribeProviderSchema = z.enum(["openai", "captions-only", "local-whisper"]);
+export const youtubeTranscriptProviderSchema = z.enum(["auto", "yt-dlp", "supadata"]);
+export const supadataTranscriptModeSchema = z.enum(["native", "generate", "auto"]);
 
 export const envSchema = z.object({
   APP_PUBLIC_URL: z.string().default("http://127.0.0.1:3000"),
   AI_TEXT_PROVIDER: textProviderSchema.default("openai"),
   AI_TRANSCRIBE_PROVIDER: transcribeProviderSchema.default("openai"),
+  YOUTUBE_TRANSCRIPT_PROVIDER: youtubeTranscriptProviderSchema.default("auto"),
   OPENAI_API_KEY: z.string().default(""),
   OPENAI_SUMMARY_MODEL: z.string().default("gpt-5.4-mini"),
   OPENAI_TRANSCRIBE_MODEL: z.string().default("gpt-4o-mini-transcribe"),
@@ -19,6 +22,9 @@ export const envSchema = z.object({
   OPENROUTER_TEXT_MODEL: z.string().default("openrouter/free"),
   GEMINI_API_KEY: z.string().default(""),
   GEMINI_TEXT_MODEL: z.string().default("gemini-3.5-flash"),
+  SUPADATA_API_KEY: z.string().default(""),
+  SUPADATA_TRANSCRIPT_MODE: supadataTranscriptModeSchema.default("native"),
+  SUPADATA_LANG: z.string().default("en"),
   YTDLP_COOKIES_PATH: z.string().default(""),
   LOCAL_WHISPER_COMMAND: z.string().default("whisper"),
   LOCAL_WHISPER_MODEL: z.string().default("base"),
@@ -40,6 +46,7 @@ export const config = {
   appPublicUrl: parsed.APP_PUBLIC_URL,
   aiTextProvider: parsed.AI_TEXT_PROVIDER,
   aiTranscribeProvider: parsed.AI_TRANSCRIBE_PROVIDER,
+  youtubeTranscriptProvider: parsed.YOUTUBE_TRANSCRIPT_PROVIDER,
   openaiApiKey: parsed.OPENAI_API_KEY,
   openaiSummaryModel: parsed.OPENAI_SUMMARY_MODEL,
   openaiTranscribeModel: parsed.OPENAI_TRANSCRIBE_MODEL,
@@ -47,6 +54,9 @@ export const config = {
   openRouterTextModel: parsed.OPENROUTER_TEXT_MODEL,
   geminiApiKey: parsed.GEMINI_API_KEY,
   geminiTextModel: parsed.GEMINI_TEXT_MODEL,
+  supadataApiKey: parsed.SUPADATA_API_KEY,
+  supadataTranscriptMode: parsed.SUPADATA_TRANSCRIPT_MODE,
+  supadataLang: parsed.SUPADATA_LANG,
   ytdlpCookiesPath: parsed.YTDLP_COOKIES_PATH,
   localWhisperCommand: parsed.LOCAL_WHISPER_COMMAND,
   localWhisperModel: parsed.LOCAL_WHISPER_MODEL,
@@ -84,6 +94,14 @@ export function requireGeminiKey(): string {
   }
 
   return config.geminiApiKey;
+}
+
+export function requireSupadataKey(): string {
+  if (!config.supadataApiKey.trim()) {
+    throw new Error("SUPADATA_API_KEY is missing. Add it to .env or set YOUTUBE_TRANSCRIPT_PROVIDER=yt-dlp.");
+  }
+
+  return config.supadataApiKey;
 }
 
 export function summaryModelId(): string {

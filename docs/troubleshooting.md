@@ -26,7 +26,15 @@ Hosted servers and VPS IPs can be challenged by YouTube even when the same URL w
 
 For desktop Chrome users, prefer the LearnCache extension. When you click the popup on an open YouTube video, the extension tries to capture available captions from the browser page and sends the transcript to LearnCache directly. That avoids asking the server to act like a YouTube browser.
 
-Cookie files are a fallback for server-side `yt-dlp`, not the recommended user experience. If you have permission to process the video and still want hosted server extraction, export a Netscape-format cookies file from a browser profile you control, store it outside git, and point LearnCache at it:
+For hosted paste/share capture, configure Supadata before falling back to cookie files:
+
+```dotenv
+YOUTUBE_TRANSCRIPT_PROVIDER=auto
+SUPADATA_API_KEY=...
+SUPADATA_TRANSCRIPT_MODE=native
+```
+
+Cookie files are a lower-level fallback for server-side `yt-dlp`, not the recommended user experience. If you have permission to process the video and still want hosted server extraction, export a Netscape-format cookies file from a browser profile you control, store it outside git, and point LearnCache at it:
 
 ```dotenv
 YTDLP_COOKIES_PATH=/data/youtube-cookies.txt
@@ -77,7 +85,7 @@ This is expected if a YouTube video has no captions:
 No YouTube captions were found and AI_TRANSCRIBE_PROVIDER=captions-only is enabled.
 ```
 
-Switch to `AI_TRANSCRIBE_PROVIDER=openai` or `local-whisper` for audio fallback.
+Use the Chrome extension, add `SUPADATA_API_KEY` for hosted YouTube transcript fallback, or switch to `AI_TRANSCRIBE_PROVIDER=openai` / `local-whisper` for audio fallback.
 
 ## Clerk 401 Or 403
 

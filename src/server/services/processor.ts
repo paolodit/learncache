@@ -22,6 +22,7 @@ import {
 } from "./media.js";
 import { cacheThumbnail } from "./thumbnail.js";
 import { summarizeTranscript, transcribeAudioChunks } from "./ai.js";
+import { fetchSupadataYouTubeTranscript } from "./supadata.js";
 
 export async function processItem(itemId: string): Promise<void> {
   const item = getItemRow(itemId);
@@ -96,49 +97,85 @@ async function processYouTubeItem(itemId: string, url: string): Promise<{
   text: string;
   segments: TranscriptSegment[];
 }> {
-  addLog(itemId, "info", "Fetching YouTube metadata.");
-  const { raw, metadata } = await readYouTubeMetadata(url);
-  updateItem(itemId, {
-    title: metadata.title,
-    creator: metadata.creator,
-    durationSeconds: metadata.durationSeconds,
-    thumbnailUrl: metadata.thumbnailUrl,
-    canonicalUrl: metadata.canonicalUrl ?? undefined
-  });
-  if (metadata.thumbnailUrl) {
+  const shouldTryYtDlp = config.youtubeTranscriptProvider !== "supadata";
+  const shouldTrySupadata = config.youtubeTranscriptProvider !== "yt-dlp" && Boolean(config.supadataApiKey.trim());
+
+  if (shouldTryYtDlp) {
     try {
-      const cached = await cacheThumbnail(itemId, metadata.thumbnailUrl);
-      if (cached) {
-        updateItem(itemId, {
-          thumbnailPath: cached.relativePath,
-          thumbnailMimeType: cached.mimeType,
-          thumbnailCachedAt: cached.cachedAt
-        });
-        addLog(itemId, "info", "Thumbnail cached locally.");
+      addLog(itemId, "info", "Fetching YouTube metadata.");
+      const { raw, metadata } = await readYouTubeMetadata(url);
+      updateItem(itemId, {
+        title: metadata.title,
+        creator: metadata.creator,
+        durationSeconds: metadata.durationSeconds,
+        thumbnailUrl: metadata.thumbnailUrl,
+        canonicalUrl: metadata.canonicalUrl ?? undefined
+      });
+      if (metadata.thumbnailUrl) {
+        await cacheYouTubeThumbnail(itemId, metadata.thumbnailUrl);
+      }
+
+      addLog(itemId, "info", "Checking for captions.");
+      const captions = await fetchYouTubeCaptions(raw);
+      if (captions) {
+        addLog(itemId, "info", "Using available YouTube captions.");
+        return {
+          itemId,
+          source: "youtube_caption",
+          language: captions.language,
+          text: captions.text,
+          segments: captions.segments
+        };
       }
     } catch (error) {
-      addLog(itemId, "warn", `Thumbnail cache skipped: ${error instanceof Error ? error.message : String(error)}`);
+      if (!shouldTrySupadata) throw error;
+      addLog(itemId, "warn", `yt-dlp caption lookup skipped: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
-  addLog(itemId, "info", "Checking for captions.");
-  const captions = await fetchYouTubeCaptions(raw);
-  if (captions) {
-    addLog(itemId, "info", "Using available YouTube captions.");
-    return {
-      itemId,
-      source: "youtube_caption",
-      language: captions.language,
-      text: captions.text,
-      segments: captions.segments
-    };
+  if (config.youtubeTranscriptProvider !== "yt-dlp") {
+    if (!config.supadataApiKey.trim()) {
+      if (config.youtubeTranscriptProvider === "supadata") {
+        throw new Error("SUPADATA_API_KEY is missing. Add it to .env or set YOUTUBE_TRANSCRIPT_PROVIDER=auto.");
+      }
+    } else {
+      addLog(itemId, "info", `Checking Supadata transcript provider (${config.supadataTranscriptMode}).`);
+      const supadata = await fetchSupadataYouTubeTranscript(url);
+      if (supadata) {
+        addLog(itemId, "info", "Using Supadata transcript.");
+        return {
+          itemId,
+          source: "supadata_transcript",
+          language: supadata.language,
+          text: supadata.text,
+          segments: supadata.segments
+        };
+      }
+      addLog(itemId, "warn", "Supadata did not return a transcript.");
+    }
   }
 
   addLog(itemId, "info", "No captions found. Falling back to audio transcription.");
   if (config.aiTranscribeProvider === "captions-only") {
-    throw new Error("No YouTube captions were found and AI_TRANSCRIBE_PROVIDER=captions-only is enabled.");
+    throw new Error("No YouTube captions were found. Try the browser extension, configure SUPADATA_API_KEY, or choose openai/local-whisper audio transcription.");
   }
   return processAudioFallback(itemId, async (workDir) => downloadYouTubeAudio(url, workDir));
+}
+
+async function cacheYouTubeThumbnail(itemId: string, thumbnailUrl: string): Promise<void> {
+  try {
+    const cached = await cacheThumbnail(itemId, thumbnailUrl);
+    if (cached) {
+      updateItem(itemId, {
+        thumbnailPath: cached.relativePath,
+        thumbnailMimeType: cached.mimeType,
+        thumbnailCachedAt: cached.cachedAt
+      });
+      addLog(itemId, "info", "Thumbnail cached locally.");
+    }
+  } catch (error) {
+    addLog(itemId, "warn", `Thumbnail cache skipped: ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
 
 async function processAudioOrPodcastItem(itemId: string, url: string): Promise<{

@@ -5,6 +5,7 @@ The app separates text summaries from audio transcription.
 ```dotenv
 AI_TEXT_PROVIDER=openai | openrouter | gemini
 AI_TRANSCRIBE_PROVIDER=openai | captions-only | local-whisper
+YOUTUBE_TRANSCRIPT_PROVIDER=auto | yt-dlp | supadata
 ```
 
 ## Cheapest Path
@@ -16,6 +17,17 @@ AI_TRANSCRIBE_PROVIDER=captions-only
 ```
 
 This processes captioned YouTube videos without paid transcription. If a YouTube video has no captions, or the item is podcast/audio-only, the job fails with a clear message instead of silently spending money.
+
+For hosted installs where `yt-dlp` gets challenged by YouTube, add Supadata as a YouTube transcript fallback:
+
+```dotenv
+YOUTUBE_TRANSCRIPT_PROVIDER=auto
+SUPADATA_API_KEY=...
+SUPADATA_TRANSCRIPT_MODE=native
+SUPADATA_LANG=en
+```
+
+`native` asks Supadata for existing transcripts/captions and is the safest default for low-cost use. Supadata currently advertises a free tier with 100 credits/month, and a native transcript costs 1 credit. Check their current pricing before relying on the quota: [Supadata pricing](https://supadata.ai/pricing).
 
 ## Free-ish Summary Links
 
@@ -90,7 +102,8 @@ The app normalizes audio with `ffmpeg`, calls the local Whisper command for each
 
 ## Practical Recommendation
 
-- Try `captions-only` first if you mostly save YouTube.
+- Use the desktop Chrome extension first if you mostly save YouTube from a browser.
+- For hosted paste/share capture, set `YOUTUBE_TRANSCRIPT_PROVIDER=auto` and add `SUPADATA_API_KEY` as a fallback before audio transcription.
 - Use OpenRouter or Gemini for cheap summaries.
 - Use OpenAI or local Whisper for audio-only/podcast transcription.
 - Do not put provider keys in browser extensions, frontend code, or committed files.

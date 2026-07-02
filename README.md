@@ -22,6 +22,7 @@ Tools like Glasp are useful, but the free tier can be tight if you want private 
 - Deduplicate and normalize source links.
 - Capture YouTube captions from the open browser tab with the desktop Chrome extension when available.
 - Fetch YouTube metadata/captions with `yt-dlp` as a local or hosted fallback.
+- Use Supadata as an optional hosted YouTube transcript fallback before audio transcription.
 - Fall back to OpenAI or local Whisper transcription for audio when configured.
 - Generate structured learning notes through OpenAI, OpenRouter, or Gemini.
 - Store everything in SQLite: items, transcripts, summaries, thumbnails, jobs, logs, and FTS search index.
@@ -81,6 +82,7 @@ Mac users do not need a different app path. They just install the media tools wi
 You can run useful workflows without jumping straight to paid transcription:
 
 - **No transcription spend:** set `AI_TRANSCRIBE_PROVIDER=captions-only` and use captioned YouTube videos.
+- **Hosted YouTube fallback:** set `YOUTUBE_TRANSCRIPT_PROVIDER=auto` and add `SUPADATA_API_KEY`; Supadata currently advertises a 100-credit/month free tier.
 - **Free/cheap summaries:** try OpenRouter's [`openrouter/free`](https://openrouter.ai/docs/guides/routing/routers/free-router) router or [`:free` model variants](https://openrouter.ai/docs/guides/routing/model-variants/free).
 - **Gemini summaries:** create a [Gemini API key](https://ai.google.dev/gemini-api/docs/api-key) and check Google's [Gemini API pricing/free-tier page](https://ai.google.dev/gemini-api/docs/pricing).
 - **Free local transcription:** use `AI_TRANSCRIBE_PROVIDER=local-whisper` if you are happy to install and run Whisper locally.
@@ -108,6 +110,8 @@ AI_TEXT_PROVIDER=openrouter
 OPENROUTER_API_KEY=sk-or-...
 OPENROUTER_TEXT_MODEL=openrouter/free
 AI_TRANSCRIBE_PROVIDER=captions-only
+YOUTUBE_TRANSCRIPT_PROVIDER=auto
+SUPADATA_API_KEY=
 ```
 
 You can also use Gemini for summaries, or local Whisper for transcription. Free tiers and free routers are best-effort and can change, so [AI providers and cheap/free options](docs/ai-providers.md) calls out the tradeoffs and key links.
@@ -123,6 +127,8 @@ AUTH_ENABLED=true
 CLERK_PUBLISHABLE_KEY=pk_...
 CLERK_SECRET_KEY=sk_...
 ALLOWED_EMAILS=you@example.com
+YOUTUBE_TRANSCRIPT_PROVIDER=auto
+SUPADATA_API_KEY=
 ```
 
 SQLite works here as long as the app runs as a single instance and `/data` is persistent. See [docs/deploy-docker.md](docs/deploy-docker.md) for the provider-neutral deployment path.

@@ -33,13 +33,19 @@ ALLOWED_EMAILS=you@example.com
 CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTENSION_ID
 AI_TEXT_PROVIDER=openai
 AI_TRANSCRIBE_PROVIDER=openai
+YOUTUBE_TRANSCRIPT_PROVIDER=auto
 OPENAI_API_KEY=sk-...
 OPENAI_SUMMARY_MODEL=gpt-5.4-mini
 OPENAI_TRANSCRIBE_MODEL=gpt-4o-mini-transcribe
+SUPADATA_API_KEY=
+SUPADATA_TRANSCRIPT_MODE=native
+SUPADATA_LANG=en
 YTDLP_COOKIES_PATH=
 ```
 
 For cheaper summaries, switch `AI_TEXT_PROVIDER` to `openrouter` or `gemini` and set the matching key.
+
+For a hosted YouTube transcript fallback, create a Supadata key and set `SUPADATA_API_KEY`. In `auto` mode LearnCache tries `yt-dlp` captions first, then Supadata, then your configured audio transcription fallback. Supadata's free quota and pricing can change, so check [Supadata pricing](https://supadata.ai/pricing) before depending on it.
 
 If YouTube challenges the VPS with "Sign in to confirm you're not a bot", export a Netscape-format YouTube cookies file from a browser profile you control, copy it into the persistent `/data` directory, and set:
 
