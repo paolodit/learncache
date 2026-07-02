@@ -10,25 +10,43 @@ PowerShell:
 
 ```powershell
 npm install
-$env:PLASMO_PUBLIC_APP_URL="https://learncache.example.com"
+New-Item -ItemType Directory -Force local
+Copy-Item local.example.json local/config.json
+notepad local/config.json
+npm run build:local
+```
+
+`local/config.json` is ignored by Git. Put your real hosted app URL, Clerk publishable key, and extension host permissions in that file:
+
+```json
+{
+  "appUrl": "https://learncache.example.com",
+  "clerkPublishableKey": "pk_...",
+  "hostPermissions": [
+    "http://127.0.0.1:3000/*",
+    "http://localhost:3000/*",
+    "https://www.youtube.com/*",
+    "https://learncache.example.com/*"
+  ]
+}
+```
+
+`npm run build:local` temporarily applies your private host permissions for the build, then restores the tracked `package.json` so personal domains do not get staged.
+
+Load the generated extension from `build/chrome-mv3-prod` in Chrome's extension developer mode.
+
+For public/local-only builds that do not need private hosted settings, you can still use environment variables:
+
+```powershell
+$env:PLASMO_PUBLIC_APP_URL="http://127.0.0.1:3000"
 $env:PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_..."
 npm run build
 ```
 
-Or copy `.env.example` to `.env.local`, edit it, and build:
-
-```powershell
-Copy-Item .env.example .env.local
-notepad .env.local
-npm run build
-```
-
-Load the generated extension from `build/chrome-mv3-prod` in Chrome's extension developer mode.
-
-For hosted builds, also update `package.json` host permissions to your app domain before building:
+If you use a hosted app, make sure `hostPermissions` includes that app origin:
 
 ```json
-"host_permissions": [
+"hostPermissions": [
   "http://127.0.0.1:3000/*",
   "http://localhost:3000/*",
   "https://www.youtube.com/*",
@@ -36,10 +54,10 @@ For hosted builds, also update `package.json` host permissions to your app domai
 ]
 ```
 
-Use your real hosted domain locally, rebuild, and load the rebuilt folder. Do not commit personal domains to the public repo.
-
 The popup sends browser-captured YouTube transcripts to `/api/items/import-transcript` when possible. Otherwise it sends the current tab to `/api/items` with a Clerk session token. The context menu opens `/capture?url=...` as a safe fallback because that path relies on the normal web app session.
 
 ## Troubleshooting
 
-If the popup says `Missing PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY.`, rebuild the extension after setting `PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY`. The value is embedded at build time, so setting it after the build will not fix an already-built extension.
+If the popup says `Missing PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY.`, edit `local/config.json`, rebuild with `npm run build:local`, then reload the unpacked extension. The value is embedded at build time, so setting it after the build will not fix an already-built extension.
+
+If requests to the hosted app fail, confirm `local/config.json` includes your hosted app in `hostPermissions`, then add the Chrome extension origin to the hosted app's `CORS_ALLOWED_ORIGINS`.

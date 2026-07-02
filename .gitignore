@@ -18,4 +18,5 @@ personal/
 extension/.npm-cache/
 extension/.plasmo/
 extension/build/
+extension/local/
 extension/node_modules/

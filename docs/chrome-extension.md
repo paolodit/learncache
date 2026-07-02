@@ -26,18 +26,31 @@ npm run build
 
 Load `extension/build/chrome-mv3-prod` in Chrome extension developer mode.
 
-For hosted builds, also update `extension/package.json` host permissions to your app domain before building:
+For hosted builds, prefer an ignored local config so your private domain and Clerk key never touch tracked files:
 
-```json
-"host_permissions": [
-  "http://127.0.0.1:3000/*",
-  "http://localhost:3000/*",
-  "https://www.youtube.com/*",
-  "https://learncache.example.com/*"
-]
+```powershell
+New-Item -ItemType Directory -Force local
+Copy-Item local.example.json local/config.json
+notepad local/config.json
+npm run build:local
 ```
 
-Use your real hosted domain locally, rebuild, and load the rebuilt folder. Keep personal domains out of public commits.
+`extension/local/config.json` should contain your app URL, Clerk publishable key, and host permissions:
+
+```json
+{
+  "appUrl": "https://learncache.example.com",
+  "clerkPublishableKey": "pk_...",
+  "hostPermissions": [
+    "http://127.0.0.1:3000/*",
+    "http://localhost:3000/*",
+    "https://www.youtube.com/*",
+    "https://learncache.example.com/*"
+  ]
+}
+```
+
+`npm run build:local` temporarily applies those host permissions for the build, then restores the tracked `extension/package.json`. Keep personal domains out of public commits.
 
 ## Permissions
 
@@ -80,5 +93,5 @@ the extension was built without the Clerk publishable key. Set `PLASMO_PUBLIC_CL
 
 If requests to the hosted app fail, check both sides:
 
-- `extension/package.json` includes your hosted app in `host_permissions` before build.
+- `extension/local/config.json` includes your hosted app in `hostPermissions` before running `npm run build:local`.
 - The hosted app has `CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTENSION_ID`.
