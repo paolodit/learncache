@@ -39,6 +39,25 @@ The frontend receives only the publishable key from `/api/config`. The secret ke
 
 The desktop extension uses Clerk's Chrome extension SDK in its popup and sends a session token as `Authorization: Bearer ...`.
 
+Clerk also needs to trust the extension origin itself. The origin is:
+
+```text
+chrome-extension://EXTENSION_ID
+```
+
+Find `EXTENSION_ID` in `chrome://extensions` after loading `extension/build/chrome-mv3-prod`. Add the full origin to Clerk's allowed origins. Clerk's Chrome extension SDK requires this in both development and production.
+
+If the dashboard does not show an obvious field for allowed origins, use Clerk's instance API with your secret key and include the full current allowed-origin list:
+
+```bash
+curl -X PATCH https://api.clerk.com/v1/instance \
+  -H "Content-type: application/json" \
+  -H "Authorization: Bearer sk_..." \
+  -d '{"allowed_origins":["https://learncache.example.com","chrome-extension://EXTENSION_ID"]}'
+```
+
+Treat the secret key like a password. Do not commit it or paste it into public issues.
+
 The popup uses:
 
 - `POST /api/items/import-transcript` when it can capture a YouTube transcript from the open browser tab.

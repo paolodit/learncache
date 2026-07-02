@@ -61,3 +61,9 @@ The popup sends browser-captured YouTube transcripts to `/api/items/import-trans
 If the popup says `Missing PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY.`, edit `local/config.json`, rebuild with `npm run build:local`, then reload the unpacked extension. The value is embedded at build time, so setting it after the build will not fix an already-built extension.
 
 If requests to the hosted app fail, confirm `local/config.json` includes your hosted app in `hostPermissions`, then add the Chrome extension origin to the hosted app's `CORS_ALLOWED_ORIGINS`.
+
+If Clerk shows the sign-in UI but does not complete sign-in, copy the extension ID from `chrome://extensions` and add this origin to Clerk's allowed origins:
+
+```text
+chrome-extension://EXTENSION_ID
+```

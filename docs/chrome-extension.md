@@ -76,10 +76,37 @@ This is the preferred hosted workflow because the browser is already signed into
 ## Production Checklist
 
 1. Build the extension.
-2. Load it in Chrome and copy the extension ID.
-3. Add `chrome-extension://EXTENSION_ID` to `CORS_ALLOWED_ORIGINS`.
-4. Rebuild/reload if Clerk needs a stable CRX ID.
-5. Test signed-out, signed-in allowlisted, and signed-in non-allowlisted behavior.
+2. Load it in Chrome and copy the extension ID from `chrome://extensions`.
+3. Add `chrome-extension://EXTENSION_ID` to Clerk's allowed origins.
+4. Add `chrome-extension://EXTENSION_ID` to LearnCache's `CORS_ALLOWED_ORIGINS`.
+5. Rebuild/reload if Clerk needs a stable CRX ID.
+6. Test signed-out, signed-in allowlisted, and signed-in non-allowlisted behavior.
+
+## Clerk Extension Origin
+
+The extension origin is not your hosted website. It is:
+
+```text
+chrome-extension://EXTENSION_ID
+```
+
+Find `EXTENSION_ID` in Chrome:
+
+1. Open `chrome://extensions`.
+2. Enable Developer mode.
+3. Open the LearnCache extension card.
+4. Copy the `ID` value.
+
+Add that full origin in two places:
+
+- Clerk instance allowed origins.
+- LearnCache hosted env var:
+
+```dotenv
+CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://EXTENSION_ID
+```
+
+If Clerk shows a sign-in UI but sign-in fails, the most likely cause is that `chrome-extension://EXTENSION_ID` is missing from Clerk's allowed origins.
 
 ## Troubleshooting
 

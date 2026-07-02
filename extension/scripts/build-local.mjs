@@ -33,9 +33,20 @@ async function main() {
       PLASMO_PUBLIC_APP_URL: localConfig.appUrl,
       PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY: localConfig.clerkPublishableKey
     });
+    printPostBuildNotes(localConfig.appUrl);
   } finally {
     await fs.writeFile(packagePath, packageJsonRaw);
   }
+}
+
+function printPostBuildNotes(appUrl) {
+  console.log("");
+  console.log("LearnCache extension build complete.");
+  console.log("Load extension/build/chrome-mv3-prod in chrome://extensions, then copy its extension ID.");
+  console.log("Add this origin to Clerk allowed_origins and LearnCache CORS_ALLOWED_ORIGINS:");
+  console.log("  chrome-extension://YOUR_EXTENSION_ID");
+  console.log(`LearnCache app URL for this build: ${appUrl}`);
+  console.log("");
 }
 
 function runNpmBuild(env) {
