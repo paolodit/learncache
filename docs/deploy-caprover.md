@@ -15,7 +15,7 @@ This repo includes a `Dockerfile` and `captain-definition` that CapRover can dep
 
 SQLite is safe for this v1 only as a single-instance app. Do not scale it horizontally unless you migrate the storage layer to Postgres or another shared database.
 
-Keep personal domains, private emails, and production extension IDs in local notes or private deployment settings, not in public commits.
+Keep personal domains, private emails, and production secrets in local notes or private deployment settings, not in public commits.
 
 ## Environment
 
@@ -31,7 +31,7 @@ AUTH_PROVIDER=password
 APP_PASSWORD=generate-a-long-random-password
 APP_SESSION_SECRET=generate-a-long-random-secret
 EXTENSION_API_TOKEN=generate-a-different-long-random-token
-CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTENSION_ID
+CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://*
 AI_TEXT_PROVIDER=openai
 AI_TRANSCRIBE_PROVIDER=openai
 YOUTUBE_TRANSCRIPT_PROVIDER=auto

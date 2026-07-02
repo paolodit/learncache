@@ -43,10 +43,10 @@ Set this on the LearnCache server:
 AUTH_ENABLED=true
 AUTH_PROVIDER=password
 EXTENSION_API_TOKEN=generate-a-long-random-token
-CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTENSION_ID
+CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://*
 ```
 
-Copy the extension ID from `chrome://extensions` after loading the unpacked build.
+You do not need to copy the extension ID for normal personal use. Rebuilt unpacked extensions can get a different ID, so LearnCache supports `chrome-extension://*` when extension auth uses `EXTENSION_API_TOKEN`. If you publish a fixed extension and want stricter CORS, replace the wildcard with the exact `chrome-extension://EXTENSION_ID` origin.
 
 ## Troubleshooting
 
@@ -56,4 +56,4 @@ If capture requests fail, confirm:
 
 - the extension token matches server `EXTENSION_API_TOKEN`;
 - `hostPermissions` includes your app URL;
-- `CORS_ALLOWED_ORIGINS` includes the extension origin.
+- `CORS_ALLOWED_ORIGINS` includes `chrome-extension://*` or the exact extension origin.

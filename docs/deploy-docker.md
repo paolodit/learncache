@@ -67,7 +67,7 @@ cp docker-compose.example.yml docker-compose.yml
 docker compose up -d --build
 ```
 
-Do not commit a filled-in `docker-compose.yml` if it contains real domains, emails, extension IDs, or keys.
+Do not commit a filled-in `docker-compose.yml` if it contains real domains, emails, or keys.
 
 The repo ignores `docker-compose.yml` and `docker-compose.*.yml` by default for that reason.
 
@@ -90,7 +90,7 @@ AUTH_PROVIDER=password
 APP_PASSWORD=generate-a-long-random-password
 APP_SESSION_SECRET=generate-a-long-random-secret
 EXTENSION_API_TOKEN=generate-a-different-long-random-token
-CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTENSION_ID
+CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://*
 YTDLP_COOKIES_PATH=
 ```
 

@@ -50,11 +50,12 @@ Load `extension/build/chrome-mv3-prod` in Chrome extension developer mode.
 3. Include your app domain in `hostPermissions`.
 4. Build with `npm run build:local`.
 5. Load the extension from `extension/build/chrome-mv3-prod`.
-6. Copy the extension ID from `chrome://extensions`.
-7. Add `chrome-extension://EXTENSION_ID` to hosted `CORS_ALLOWED_ORIGINS`.
-8. Restart the hosted app after env changes.
+6. Add `chrome-extension://*` to hosted `CORS_ALLOWED_ORIGINS`.
+7. Restart the hosted app after env changes.
 
 No Clerk setup is required.
+
+You do not need to copy the extension ID for normal personal use. The extension API token is the actual gate. If you publish a fixed extension and want stricter CORS, replace `chrome-extension://*` with the exact `chrome-extension://EXTENSION_ID` origin.
 
 ## Permissions
 
@@ -89,5 +90,5 @@ If requests to the hosted app fail:
 
 - Confirm the token in `extension/local/config.json` exactly matches server `EXTENSION_API_TOKEN`.
 - Confirm `hostPermissions` includes your hosted app.
-- Confirm hosted `CORS_ALLOWED_ORIGINS` includes `chrome-extension://YOUR_EXTENSION_ID`.
+- Confirm hosted `CORS_ALLOWED_ORIGINS` includes `chrome-extension://*` or the exact extension origin.
 - Restart the hosted app after changing env vars.

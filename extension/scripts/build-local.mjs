@@ -48,9 +48,10 @@ function unique(values) {
 function printPostBuildNotes(localConfig) {
   console.log("");
   console.log("LearnCache extension build complete.");
-  console.log("Load extension/build/chrome-mv3-prod in chrome://extensions, then copy its extension ID.");
+  console.log("Load extension/build/chrome-mv3-prod in chrome://extensions.");
   console.log("Add this origin to LearnCache CORS_ALLOWED_ORIGINS:");
-  console.log("  chrome-extension://YOUR_EXTENSION_ID");
+  console.log("  chrome-extension://*");
+  console.log("Use an exact chrome-extension://EXTENSION_ID only if you deliberately pin one extension.");
   console.log(`LearnCache app URL for this build: ${localConfig.appUrl}`);
   console.log("");
 }

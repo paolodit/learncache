@@ -105,7 +105,7 @@ EXTENSION_API_TOKEN=...
 For extensions, also check:
 
 ```dotenv
-CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTENSION_ID
+CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://*
 ```
 
 ## Thumbnail Missing

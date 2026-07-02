@@ -29,7 +29,7 @@ AUTH_PROVIDER=password
 APP_PASSWORD=generate-a-long-random-password
 APP_SESSION_SECRET=generate-a-long-random-secret
 EXTENSION_API_TOKEN=generate-a-different-long-random-token
-CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTENSION_ID
+CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://*
 ```
 
 Use different values for `APP_PASSWORD`, `APP_SESSION_SECRET`, and `EXTENSION_API_TOKEN`.
@@ -52,6 +52,8 @@ Generate secrets with a password manager, `openssl rand -base64 48`, or PowerShe
 The extension token is embedded into your local extension build from `extension/local/config.json`. That file is ignored by Git.
 
 The token is not a browser-user password. Treat it like an API key: rotate it if you share the built extension or suspect it leaked.
+
+Use `chrome-extension://*` in `CORS_ALLOWED_ORIGINS` so rebuilding or reloading the unpacked extension does not force another hosted env edit. The token is still required for extension API calls. If you publish a fixed extension and want tighter CORS, you can replace the wildcard with the exact `chrome-extension://EXTENSION_ID` origin.
 
 ## Clerk
 

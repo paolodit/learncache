@@ -15,7 +15,7 @@ export async function buildApp() {
   });
 
   await app.register(cors, {
-    origin: allowedOrigins()
+    origin: allowedOrigin
   });
 
   assertAuthConfiguration();
@@ -103,11 +103,37 @@ const loginSchema = z.object({
 
 const publicApiPaths = new Set(["/api/health", "/api/config", "/api/me", "/api/auth/login", "/api/auth/logout"]);
 
+type CorsOrigin = string | boolean | RegExp | CorsOrigin[];
+type CorsOriginCallback = (error: Error | null, origin: CorsOrigin) => void;
+
+function allowedOrigin(origin: string | undefined, callback: CorsOriginCallback): void {
+  if (!origin) {
+    callback(null, true);
+    return;
+  }
+
+  if (allowedOrigins().includes(origin)) {
+    callback(null, true);
+    return;
+  }
+
+  if (allowsChromeExtensionWildcard() && origin.startsWith("chrome-extension://")) {
+    callback(null, true);
+    return;
+  }
+
+  callback(null, false);
+}
+
 function allowedOrigins(): string[] {
   return [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
     config.appPublicUrl,
     ...config.corsAllowedOrigins
-  ].filter((origin, index, origins) => Boolean(origin) && origins.indexOf(origin) === index);
+  ].filter((origin, index, origins) => Boolean(origin) && origin !== "chrome-extension://*" && origins.indexOf(origin) === index);
+}
+
+function allowsChromeExtensionWildcard(): boolean {
+  return config.corsAllowedOrigins.includes("chrome-extension://*");
 }
