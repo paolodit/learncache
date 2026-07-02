@@ -1,5 +1,7 @@
 {
   "name": "learncache-extension",
+  "displayName": "LearnCache",
+  "description": "Capture YouTube and podcast links into LearnCache.",
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
