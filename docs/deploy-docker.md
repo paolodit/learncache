@@ -43,9 +43,10 @@ docker run -d \
   -e API_HOST=0.0.0.0 \
   -e API_PORT=80 \
   -e AUTH_ENABLED=true \
-  -e CLERK_PUBLISHABLE_KEY=pk_... \
-  -e CLERK_SECRET_KEY=sk_... \
-  -e ALLOWED_EMAILS=you@example.com \
+  -e AUTH_PROVIDER=password \
+  -e APP_PASSWORD=generate-a-long-random-password \
+  -e APP_SESSION_SECRET=generate-a-long-random-secret \
+  -e EXTENSION_API_TOKEN=generate-a-different-long-random-token \
   -e AI_TEXT_PROVIDER=openai \
   -e AI_TRANSCRIBE_PROVIDER=openai \
   -e YOUTUBE_TRANSCRIPT_PROVIDER=auto \
@@ -85,9 +86,10 @@ DATA_DIR=/data
 API_HOST=0.0.0.0
 API_PORT=80
 AUTH_ENABLED=true
-CLERK_PUBLISHABLE_KEY=pk_...
-CLERK_SECRET_KEY=sk_...
-ALLOWED_EMAILS=you@example.com
+AUTH_PROVIDER=password
+APP_PASSWORD=generate-a-long-random-password
+APP_SESSION_SECRET=generate-a-long-random-secret
+EXTENSION_API_TOKEN=generate-a-different-long-random-token
 CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTENSION_ID
 YTDLP_COOKIES_PATH=
 ```
@@ -138,7 +140,7 @@ Take backups before redeploying, changing AI providers, migrating hosts, or upgr
 ## Smoke Test
 
 1. Visit `https://learncache.example.com/api/health`.
-2. Sign in through Clerk with an allowlisted email.
+2. Sign in through the web app with `APP_PASSWORD`.
 3. Capture one captioned YouTube video.
 4. Confirm the item completes and shows a thumbnail/source card.
 5. Export Markdown, JSON, and ZIP.

@@ -3,7 +3,14 @@ import type { CreateItemResponse, ItemDetail, ItemStatus, ItemSummary, SourceTyp
 export interface AppConfig {
   appPublicUrl: string;
   authEnabled: boolean;
+  authProvider: "none" | "password" | "clerk";
   clerkPublishableKey: string | null;
+}
+
+export interface AppUser {
+  userId: string;
+  email: string | null;
+  authMethod: "local" | "password" | "extension-token" | "clerk";
 }
 
 export interface ItemFilters {
@@ -47,8 +54,22 @@ export async function getAppConfig(): Promise<AppConfig> {
   return request<AppConfig>("/api/config");
 }
 
-export async function getMe(): Promise<{ user: { userId: string; email: string | null } | null; authEnabled: boolean }> {
-  return request<{ user: { userId: string; email: string | null } | null; authEnabled: boolean }>("/api/me");
+export async function getMe(): Promise<{ user: AppUser | null; authEnabled: boolean; authProvider: AppConfig["authProvider"] }> {
+  return request<{ user: AppUser | null; authEnabled: boolean; authProvider: AppConfig["authProvider"] }>("/api/me");
+}
+
+export async function loginWithPassword(password: string): Promise<{ user: AppUser; authEnabled: boolean; authProvider: AppConfig["authProvider"] }> {
+  return request<{ user: AppUser; authEnabled: boolean; authProvider: AppConfig["authProvider"] }>("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ password })
+  });
+}
+
+export async function logout(): Promise<void> {
+  await request<void>("/api/auth/logout", {
+    method: "POST",
+    body: JSON.stringify({})
+  });
 }
 
 export async function listItems(filters: ItemFilters): Promise<ItemSummary[]> {

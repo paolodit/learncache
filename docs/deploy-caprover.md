@@ -27,9 +27,10 @@ DATA_DIR=/data
 API_HOST=0.0.0.0
 API_PORT=80
 AUTH_ENABLED=true
-CLERK_PUBLISHABLE_KEY=pk_...
-CLERK_SECRET_KEY=sk_...
-ALLOWED_EMAILS=you@example.com
+AUTH_PROVIDER=password
+APP_PASSWORD=generate-a-long-random-password
+APP_SESSION_SECRET=generate-a-long-random-secret
+EXTENSION_API_TOKEN=generate-a-different-long-random-token
 CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTENSION_ID
 AI_TEXT_PROVIDER=openai
 AI_TRANSCRIBE_PROVIDER=openai
@@ -90,7 +91,7 @@ Take backups before redeploys, host migrations, or model/provider experiments.
 ## Smoke Test
 
 1. Visit `https://learncache.example.com/api/health`.
-2. Sign in through the web app.
+2. Sign in through the web app with `APP_PASSWORD`.
 3. Paste a captioned YouTube video.
 4. Confirm the item completes and survives a redeploy.
 5. Download ZIP export and confirm it contains `notes.md`, `item.json`, and thumbnail asset.

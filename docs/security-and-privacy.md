@@ -16,7 +16,10 @@ For a public URL:
 
 ```dotenv
 AUTH_ENABLED=true
-ALLOWED_EMAILS=you@example.com
+AUTH_PROVIDER=password
+APP_PASSWORD=generate-a-long-random-password
+APP_SESSION_SECRET=generate-a-long-random-secret
+EXTENSION_API_TOKEN=generate-a-different-long-random-token
 ```
 
 The backend protects API data, thumbnails, and exports. Do not expose hosted mode without auth.
@@ -28,9 +31,12 @@ Keep these server-side only:
 - `OPENAI_API_KEY`
 - `OPENROUTER_API_KEY`
 - `GEMINI_API_KEY`
-- `CLERK_SECRET_KEY`
+- `APP_PASSWORD`
+- `APP_SESSION_SECRET`
+- `EXTENSION_API_TOKEN`
+- `CLERK_SECRET_KEY` if using the optional Clerk provider
 
-The frontend and extension may receive Clerk publishable keys, but never AI provider keys.
+The extension receives `EXTENSION_API_TOKEN` at build time. Treat the built extension as private and rotate the token if it leaks. The frontend and extension should never receive AI provider keys.
 
 ## Stored Data
 

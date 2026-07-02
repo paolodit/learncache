@@ -18,7 +18,6 @@
     "package": "plasmo package"
   },
   "dependencies": {
-    "@clerk/chrome-extension": "^2.6.4",
     "plasmo": "^0.90.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -27,7 +26,16 @@
     "typescript": "^5.7.2"
   },
   "manifest": {
-    "permissions": ["activeTab", "contextMenus", "cookies", "scripting", "storage"],
-    "host_permissions": ["http://127.0.0.1:3000/*", "http://localhost:3000/*", "https://www.youtube.com/*"]
+    "permissions": [
+      "activeTab",
+      "contextMenus",
+      "scripting",
+      "storage"
+    ],
+    "host_permissions": [
+      "http://127.0.0.1:3000/*",
+      "http://localhost:3000/*",
+      "https://www.youtube.com/*"
+    ]
   }
 }

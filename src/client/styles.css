@@ -27,7 +27,8 @@ body {
   color: #27352d;
 }
 
-.auth-screen > div {
+.auth-screen > div,
+.auth-screen form {
   width: min(420px, 100%);
 }
 
@@ -44,7 +45,26 @@ body {
   line-height: 1.5;
 }
 
-.auth-screen button {
+.auth-screen label {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+  color: #3b4a41;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.auth-screen input {
+  height: 42px;
+  border: 1px solid #cfd7cc;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #17211c;
+  padding: 0 12px;
+}
+
+.auth-screen button,
+.user-menu button {
   height: 40px;
   border: 1px solid #2f6f4e;
   border-radius: 8px;
@@ -52,6 +72,21 @@ body {
   color: #ffffff;
   padding: 0 16px;
   cursor: pointer;
+}
+
+.auth-screen button:disabled {
+  cursor: not-allowed;
+  opacity: 0.56;
+}
+
+.auth-error {
+  margin-top: 12px;
+  border: 1px solid #e2aaa6;
+  border-radius: 8px;
+  background: #fff3f2;
+  color: #7a2429;
+  padding: 10px 12px;
+  font-size: 13px;
 }
 
 .user-menu {

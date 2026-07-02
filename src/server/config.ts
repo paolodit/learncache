@@ -9,6 +9,7 @@ export const textProviderSchema = z.enum(["openai", "openrouter", "gemini"]);
 export const transcribeProviderSchema = z.enum(["openai", "captions-only", "local-whisper"]);
 export const youtubeTranscriptProviderSchema = z.enum(["auto", "yt-dlp", "supadata"]);
 export const supadataTranscriptModeSchema = z.enum(["native", "generate", "auto"]);
+export const authProviderSchema = z.enum(["none", "password", "clerk"]);
 
 export const envSchema = z.object({
   APP_PUBLIC_URL: z.string().default("http://127.0.0.1:3000"),
@@ -34,6 +35,10 @@ export const envSchema = z.object({
   API_PORT: z.coerce.number().int().positive().default(4311),
   WORKER_DISABLED: z.string().optional(),
   AUTH_ENABLED: z.string().default("false"),
+  AUTH_PROVIDER: authProviderSchema.optional(),
+  APP_PASSWORD: z.string().default(""),
+  APP_SESSION_SECRET: z.string().default(""),
+  EXTENSION_API_TOKEN: z.string().default(""),
   CLERK_PUBLISHABLE_KEY: z.string().default(""),
   CLERK_SECRET_KEY: z.string().default(""),
   ALLOWED_EMAILS: z.string().default(""),
@@ -41,6 +46,8 @@ export const envSchema = z.object({
 });
 
 const parsed = envSchema.parse(process.env);
+const authEnabled = isTruthy(parsed.AUTH_ENABLED);
+const authProvider = parsed.AUTH_PROVIDER ?? (authEnabled ? "password" : "none");
 
 export const config = {
   appPublicUrl: parsed.APP_PUBLIC_URL,
@@ -65,7 +72,11 @@ export const config = {
   apiHost: parsed.API_HOST,
   apiPort: parsed.API_PORT,
   workerDisabled: parsed.WORKER_DISABLED === "1" || parsed.WORKER_DISABLED === "true",
-  authEnabled: isTruthy(parsed.AUTH_ENABLED),
+  authEnabled,
+  authProvider,
+  appPassword: parsed.APP_PASSWORD,
+  appSessionSecret: parsed.APP_SESSION_SECRET,
+  extensionApiToken: parsed.EXTENSION_API_TOKEN,
   clerkPublishableKey: parsed.CLERK_PUBLISHABLE_KEY,
   clerkSecretKey: parsed.CLERK_SECRET_KEY,
   allowedEmails: splitCsv(parsed.ALLOWED_EMAILS).map((email) => email.toLowerCase()),

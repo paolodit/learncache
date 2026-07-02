@@ -10,7 +10,7 @@ Paste or share a link, let the app pull captions or transcribe audio, then get s
 It is built for two modes:
 
 - **Private local use:** SQLite in `./data`, no auth, no hosted account required.
-- **Optional self-hosting:** Docker on a single-instance host, persistent `/data`, Clerk login, email allowlist, HTTPS, and browser/mobile capture.
+- **Optional self-hosting:** Docker on a single-instance host, persistent `/data`, one app password, one extension token, HTTPS, and browser/mobile capture.
 
 ## Why LearnCache?
 
@@ -28,7 +28,7 @@ Tools like Glasp are useful, but the free tier can be tight if you want private 
 - Store everything in SQLite: items, transcripts, summaries, thumbnails, jobs, logs, and FTS search index.
 - Show a source card above every note with thumbnail, title, creator, duration, source links, status, and model/provider metadata.
 - Export Markdown, JSON, or ZIP with `notes.md`, `item.json`, and `assets/thumbnail.*`.
-- Run with no auth locally, or protect hosted installs with Clerk and an email allowlist.
+- Run with no auth locally, or protect hosted installs with a built-in password login and extension API token.
 - Capture from the web UI, `/capture`, PWA share target, or the optional desktop Chrome extension.
 - Avoid YouTube cookie-file setup for normal desktop capture when the open video exposes captions to the browser.
 
@@ -108,6 +108,7 @@ DATA_DIR=./data
 API_HOST=127.0.0.1
 API_PORT=4311
 AUTH_ENABLED=false
+AUTH_PROVIDER=none
 ```
 
 This is the default GitHub user experience: single-user, private, and backed by files you can back up.
@@ -133,9 +134,10 @@ DATA_DIR=/data
 API_HOST=0.0.0.0
 API_PORT=80
 AUTH_ENABLED=true
-CLERK_PUBLISHABLE_KEY=pk_...
-CLERK_SECRET_KEY=sk_...
-ALLOWED_EMAILS=you@example.com
+AUTH_PROVIDER=password
+APP_PASSWORD=use-a-long-random-password
+APP_SESSION_SECRET=generate-a-long-random-secret
+EXTENSION_API_TOKEN=generate-a-different-long-random-token
 YOUTUBE_TRANSCRIPT_PROVIDER=auto
 SUPADATA_API_KEY=
 ```
@@ -154,7 +156,7 @@ Add screenshots under [docs/screenshots](docs/screenshots) when you are ready, u
 - `yt-dlp` for YouTube metadata and captions
 - `ffmpeg` for podcast/audio transcription and YouTube audio fallback
 - One text-summary provider key for generated notes: OpenAI, OpenRouter, or Gemini
-- Optional Clerk keys for hosted auth
+- A long app password/session secret for hosted auth
 
 ## Scripts
 
@@ -171,7 +173,7 @@ Add screenshots under [docs/screenshots](docs/screenshots) when you are ready, u
 - [AI providers and cheap/free options](docs/ai-providers.md)
 - [Hosted Docker deployment](docs/deploy-docker.md)
 - [CapRover deployment example](docs/deploy-caprover.md)
-- [Clerk auth](docs/auth-clerk.md)
+- [Password auth](docs/auth-password.md)
 - [Desktop Chrome extension](docs/chrome-extension.md)
 - [Mobile capture and PWA sharing](docs/mobile-capture.md)
 - [Security and privacy](docs/security-and-privacy.md)

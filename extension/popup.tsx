@@ -1,10 +1,8 @@
-import { ClerkProvider, SignedIn, SignedOut, UserButton, useAuth } from "@clerk/chrome-extension";
 import { useEffect, useState } from "react";
 import "./style.css";
 
 const appUrl = process.env.PLASMO_PUBLIC_APP_URL ?? "http://127.0.0.1:3000";
-const publishableKey = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "";
-const clerkSyncHost = process.env.PLASMO_PUBLIC_CLERK_SYNC_HOST ?? "";
+const extensionApiToken = process.env.PLASMO_PUBLIC_EXTENSION_API_TOKEN ?? "";
 
 interface BrowserTranscriptCapture {
   url: string;
@@ -20,39 +18,19 @@ interface BrowserTranscriptCapture {
 }
 
 function Popup() {
-  if (!publishableKey) {
-    return <div className="popup">Missing PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY.</div>;
+  if (!extensionApiToken) {
+    return (
+      <div className="popup">
+        <h1>LearnCache</h1>
+        <p>Missing PLASMO_PUBLIC_EXTENSION_API_TOKEN.</p>
+      </div>
+    );
   }
 
-  return (
-    <ClerkProvider publishableKey={publishableKey} syncHost={clerkSyncHost || undefined}>
-      <SignedOut>
-        <SignedOutPopup />
-      </SignedOut>
-      <SignedIn>
-        <CapturePopup />
-      </SignedIn>
-    </ClerkProvider>
-  );
-}
-
-function SignedOutPopup() {
-  function openLearnCacheSignIn() {
-    chrome.tabs.create({ url: appUrl });
-  }
-
-  return (
-    <div className="popup">
-      <h1>LearnCache</h1>
-      <p>Sign in on LearnCache, then reopen this popup.</p>
-      <button onClick={openLearnCacheSignIn}>Open LearnCache sign-in</button>
-      {!clerkSyncHost ? <p className="status">Missing PLASMO_PUBLIC_CLERK_SYNC_HOST for web session sync.</p> : null}
-    </div>
-  );
+  return <CapturePopup />;
 }
 
 function CapturePopup() {
-  const { getToken } = useAuth();
   const [tabUrl, setTabUrl] = useState("");
   const [tabId, setTabId] = useState<number | null>(null);
   const [status, setStatus] = useState("Ready");
@@ -67,11 +45,10 @@ function CapturePopup() {
   async function saveCurrentTab() {
     if (!tabUrl) return;
     setStatus("Saving...");
-    const token = await getToken();
     const capture = await tryCaptureYouTubeTranscript(tabUrl, tabId);
     const response = capture
-      ? await postJson(`${appUrl.replace(/\/$/, "")}/api/items/import-transcript`, capture, token)
-      : await postJson(`${appUrl.replace(/\/$/, "")}/api/items`, { url: tabUrl }, token);
+      ? await postJson(`${appUrl.replace(/\/$/, "")}/api/items/import-transcript`, capture)
+      : await postJson(`${appUrl.replace(/\/$/, "")}/api/items`, { url: tabUrl });
 
     if (!response.ok) {
       setStatus(await response.text());
@@ -89,7 +66,6 @@ function CapturePopup() {
     <div className="popup">
       <div className="top-row">
         <h1>LearnCache</h1>
-        <UserButton />
       </div>
       <p className="url">{tabUrl || "No active tab URL"}</p>
       <button disabled={!tabUrl} onClick={() => void saveCurrentTab()}>
@@ -103,12 +79,12 @@ function CapturePopup() {
   );
 }
 
-async function postJson(url: string, body: unknown, token: string | null): Promise<Response> {
+async function postJson(url: string, body: unknown): Promise<Response> {
   return fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {})
+        Authorization: `Bearer ${extensionApiToken}`
       },
       body: JSON.stringify(body)
     });

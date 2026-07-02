@@ -13,6 +13,6 @@ Before committing screenshots, check that they do not show:
 
 - Personal domains
 - Real email addresses
-- API keys or Clerk keys
+- API keys, app passwords, session secrets, or extension tokens
 - Private transcripts, notes, or source URLs
 - Internal hosting provider or database details

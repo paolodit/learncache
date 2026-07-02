@@ -87,10 +87,20 @@ No YouTube captions were found and AI_TRANSCRIBE_PROVIDER=captions-only is enabl
 
 Use the Chrome extension, add `SUPADATA_API_KEY` for hosted YouTube transcript fallback, or switch to `AI_TRANSCRIBE_PROVIDER=openai` / `local-whisper` for audio fallback.
 
-## Clerk 401 Or 403
+## Hosted Auth 401 Or 403
 
-- `401`: you are not signed in.
-- `403`: you are signed in but your email is not in `ALLOWED_EMAILS`, or `ALLOWED_EMAILS` is empty.
+- `401`: you are not signed in, your session expired, or the extension bearer token does not match `EXTENSION_API_TOKEN`.
+- `403`: your hosted auth provider is configured but not allowing the current request.
+
+For password auth, check:
+
+```dotenv
+AUTH_ENABLED=true
+AUTH_PROVIDER=password
+APP_PASSWORD=...
+APP_SESSION_SECRET=...
+EXTENSION_API_TOKEN=...
+```
 
 For extensions, also check:
 
