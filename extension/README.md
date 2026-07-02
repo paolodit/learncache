@@ -6,15 +6,40 @@ On YouTube watch pages, the popup first tries to capture available caption track
 
 ## Setup
 
-```bash
+PowerShell:
+
+```powershell
 npm install
-set PLASMO_PUBLIC_APP_URL=https://learncache.example.com
-set PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_...
+$env:PLASMO_PUBLIC_APP_URL="https://learncache.example.com"
+$env:PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_..."
+npm run build
+```
+
+Or copy `.env.example` to `.env.local`, edit it, and build:
+
+```powershell
+Copy-Item .env.example .env.local
+notepad .env.local
 npm run build
 ```
 
 Load the generated extension from `build/chrome-mv3-prod` in Chrome's extension developer mode.
 
-For hosted builds, also update `package.json` host permissions to your app domain before building. Do not commit personal domains to the public repo.
+For hosted builds, also update `package.json` host permissions to your app domain before building:
+
+```json
+"host_permissions": [
+  "http://127.0.0.1:3000/*",
+  "http://localhost:3000/*",
+  "https://www.youtube.com/*",
+  "https://learncache.example.com/*"
+]
+```
+
+Use your real hosted domain locally, rebuild, and load the rebuilt folder. Do not commit personal domains to the public repo.
 
 The popup sends browser-captured YouTube transcripts to `/api/items/import-transcript` when possible. Otherwise it sends the current tab to `/api/items` with a Clerk session token. The context menu opens `/capture?url=...` as a safe fallback because that path relies on the normal web app session.
+
+## Troubleshooting
+
+If the popup says `Missing PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY.`, rebuild the extension after setting `PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY`. The value is embedded at build time, so setting it after the build will not fix an already-built extension.
