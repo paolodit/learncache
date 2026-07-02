@@ -37,7 +37,14 @@ The frontend receives only the publishable key from `/api/config`. The secret ke
 
 ## Extension Auth
 
-The desktop extension uses Clerk's Chrome extension SDK in its popup and sends a session token as `Authorization: Bearer ...` to `/api/items`. Add the final extension origin to `CORS_ALLOWED_ORIGINS`:
+The desktop extension uses Clerk's Chrome extension SDK in its popup and sends a session token as `Authorization: Bearer ...`.
+
+The popup uses:
+
+- `POST /api/items/import-transcript` when it can capture a YouTube transcript from the open browser tab.
+- `POST /api/items` when it falls back to URL-only capture.
+
+Add the final extension origin to `CORS_ALLOWED_ORIGINS`:
 
 ```dotenv
 CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://abcdefghijklmnopabcdefghijklmnop

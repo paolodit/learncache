@@ -32,6 +32,15 @@ Tools like Glasp are useful, but the free tier can be tight if you want private 
 - Capture from the web UI, `/capture`, PWA share target, or the optional desktop Chrome extension.
 - Avoid YouTube cookie-file setup for normal desktop capture when the open video exposes captions to the browser.
 
+## Recommended Capture Order
+
+For YouTube, use the least brittle path first:
+
+1. **Desktop Chrome extension:** best for YouTube videos you already have open. It tries to capture browser-visible captions and sends the transcript directly to LearnCache for summarization.
+2. **Hosted paste/share capture with Supadata:** best fallback for `https://learncache.example.com/capture` or mobile/PWA sharing. Set `YOUTUBE_TRANSCRIPT_PROVIDER=auto` and `SUPADATA_API_KEY`.
+3. **Local/server `yt-dlp`:** useful for local installs and as a fallback, but hosted VPS traffic can be challenged by YouTube.
+4. **Audio transcription:** last resort for podcasts, direct audio, or no-caption media when OpenAI or local Whisper is configured.
+
 ## What It Does Not Do Yet
 
 - No Notion sync in v1. Exports are Markdown, JSON, and ZIP.
