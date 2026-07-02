@@ -22,16 +22,19 @@ npm run build:local
 {
   "appUrl": "https://learncache.example.com",
   "clerkPublishableKey": "pk_...",
+  "clerkSyncHost": "https://your-clerk-frontend-api.clerk.accounts.dev",
   "hostPermissions": [
     "http://127.0.0.1:3000/*",
     "http://localhost:3000/*",
     "https://www.youtube.com/*",
-    "https://learncache.example.com/*"
+    "https://learncache.example.com/*",
+    "https://your-clerk-frontend-api.clerk.accounts.dev/*"
   ]
 }
 ```
 
 `npm run build:local` temporarily applies your private host permissions for the build, then restores the tracked `package.json` so personal domains do not get staged.
+`clerkSyncHost` is required for hosted Clerk builds. It is the Clerk Frontend API host from Clerk's Domains page. Google sign-in should happen in the normal LearnCache web app tab, then the extension syncs that web session.
 
 Load the generated extension from `build/chrome-mv3-prod` in Chrome's extension developer mode.
 
@@ -67,3 +70,5 @@ If Clerk shows the sign-in UI but does not complete sign-in, copy the extension 
 ```text
 chrome-extension://EXTENSION_ID
 ```
+
+OAuth providers such as Google should not be launched inside the popup. Sign in on the LearnCache web app tab, then reopen the extension popup.

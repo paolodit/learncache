@@ -1,9 +1,10 @@
-import { ClerkProvider, SignInButton, SignedIn, SignedOut, UserButton, useAuth } from "@clerk/chrome-extension";
+import { ClerkProvider, SignedIn, SignedOut, UserButton, useAuth } from "@clerk/chrome-extension";
 import { useEffect, useState } from "react";
 import "./style.css";
 
 const appUrl = process.env.PLASMO_PUBLIC_APP_URL ?? "http://127.0.0.1:3000";
 const publishableKey = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "";
+const clerkSyncHost = process.env.PLASMO_PUBLIC_CLERK_SYNC_HOST ?? "";
 
 interface BrowserTranscriptCapture {
   url: string;
@@ -24,20 +25,29 @@ function Popup() {
   }
 
   return (
-    <ClerkProvider publishableKey={publishableKey}>
+    <ClerkProvider publishableKey={publishableKey} syncHost={clerkSyncHost || undefined}>
       <SignedOut>
-        <div className="popup">
-          <h1>LearnCache</h1>
-          <p>Sign in to save the current tab.</p>
-          <SignInButton mode="modal">
-            <button>Sign in</button>
-          </SignInButton>
-        </div>
+        <SignedOutPopup />
       </SignedOut>
       <SignedIn>
         <CapturePopup />
       </SignedIn>
     </ClerkProvider>
+  );
+}
+
+function SignedOutPopup() {
+  function openLearnCacheSignIn() {
+    chrome.tabs.create({ url: appUrl });
+  }
+
+  return (
+    <div className="popup">
+      <h1>LearnCache</h1>
+      <p>Sign in on LearnCache, then reopen this popup.</p>
+      <button onClick={openLearnCacheSignIn}>Open LearnCache sign-in</button>
+      {!clerkSyncHost ? <p className="status">Missing PLASMO_PUBLIC_CLERK_SYNC_HOST for web session sync.</p> : null}
+    </div>
   );
 }
 

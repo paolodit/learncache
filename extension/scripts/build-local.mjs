@@ -20,9 +20,18 @@ async function main() {
     throw new Error("extension/local/config.json must include hostPermissions.");
   }
 
+  if (!localConfig.clerkSyncHost) {
+    throw new Error("extension/local/config.json must include clerkSyncHost. Use the Clerk Frontend API host from Clerk's Domains page, for example https://example.clerk.accounts.dev.");
+  }
+
+  const hostPermissions = unique([
+    ...localConfig.hostPermissions,
+    ...(localConfig.clerkSyncHost ? [hostPermissionPattern(localConfig.clerkSyncHost)] : [])
+  ]);
+
   packageJson.manifest = {
     ...(packageJson.manifest ?? {}),
-    host_permissions: localConfig.hostPermissions
+    host_permissions: hostPermissions
   };
 
   await fs.writeFile(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`);
@@ -31,21 +40,32 @@ async function main() {
     await runNpmBuild({
       ...process.env,
       PLASMO_PUBLIC_APP_URL: localConfig.appUrl,
-      PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY: localConfig.clerkPublishableKey
+      PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY: localConfig.clerkPublishableKey,
+      PLASMO_PUBLIC_CLERK_SYNC_HOST: localConfig.clerkSyncHost ?? ""
     });
-    printPostBuildNotes(localConfig.appUrl);
+    printPostBuildNotes(localConfig);
   } finally {
     await fs.writeFile(packagePath, packageJsonRaw);
   }
 }
 
-function printPostBuildNotes(appUrl) {
+function hostPermissionPattern(value) {
+  const url = new URL(value);
+  return `${url.origin}/*`;
+}
+
+function unique(values) {
+  return Array.from(new Set(values));
+}
+
+function printPostBuildNotes(localConfig) {
   console.log("");
   console.log("LearnCache extension build complete.");
   console.log("Load extension/build/chrome-mv3-prod in chrome://extensions, then copy its extension ID.");
   console.log("Add this origin to Clerk allowed_origins and LearnCache CORS_ALLOWED_ORIGINS:");
   console.log("  chrome-extension://YOUR_EXTENSION_ID");
-  console.log(`LearnCache app URL for this build: ${appUrl}`);
+  console.log(`LearnCache app URL for this build: ${localConfig.appUrl}`);
+  console.log(`Clerk sync host for this build: ${localConfig.clerkSyncHost || "(not configured)"}`);
   console.log("");
 }
 

@@ -1,10 +1,12 @@
 {
   "appUrl": "https://learncache.example.com",
   "clerkPublishableKey": "pk_...",
+  "clerkSyncHost": "https://your-clerk-frontend-api.clerk.accounts.dev",
   "hostPermissions": [
     "http://127.0.0.1:3000/*",
     "http://localhost:3000/*",
     "https://www.youtube.com/*",
-    "https://learncache.example.com/*"
+    "https://learncache.example.com/*",
+    "https://your-clerk-frontend-api.clerk.accounts.dev/*"
   ]
 }

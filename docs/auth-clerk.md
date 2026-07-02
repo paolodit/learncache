@@ -58,6 +58,16 @@ curl -X PATCH https://api.clerk.com/v1/instance \
 
 Treat the secret key like a password. Do not commit it or paste it into public issues.
 
+For Google sign-in, sign in through the normal LearnCache web app, not inside the popup. Clerk's Chrome extension package does not support OAuth/SAML redirects directly in extensions. The extension should be built with a Clerk sync host so it can share the web app session:
+
+```json
+{
+  "clerkSyncHost": "https://your-clerk-frontend-api.clerk.accounts.dev"
+}
+```
+
+Find this host in Clerk's Domains page. For development instances it is usually the verified `*.clerk.accounts.dev` primary domain. Include that host in the extension `hostPermissions` before running `npm run build:local`.
+
 The popup uses:
 
 - `POST /api/items/import-transcript` when it can capture a YouTube transcript from the open browser tab.

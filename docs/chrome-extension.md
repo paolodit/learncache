@@ -41,16 +41,20 @@ npm run build:local
 {
   "appUrl": "https://learncache.example.com",
   "clerkPublishableKey": "pk_...",
+  "clerkSyncHost": "https://your-clerk-frontend-api.clerk.accounts.dev",
   "hostPermissions": [
     "http://127.0.0.1:3000/*",
     "http://localhost:3000/*",
     "https://www.youtube.com/*",
-    "https://learncache.example.com/*"
+    "https://learncache.example.com/*",
+    "https://your-clerk-frontend-api.clerk.accounts.dev/*"
   ]
 }
 ```
 
 `npm run build:local` temporarily applies those host permissions for the build, then restores the tracked `extension/package.json`. Keep personal domains out of public commits.
+
+`clerkSyncHost` is required for hosted Clerk builds. It is the Clerk Frontend API host from Clerk's Domains page. For development instances it usually looks like `https://something.clerk.accounts.dev`. The extension uses it to share the web app's Clerk session instead of trying to complete Google OAuth inside the popup.
 
 ## Permissions
 
@@ -58,9 +62,11 @@ The extension asks for:
 
 - `activeTab` to read the current tab URL from the popup.
 - `contextMenus` to add "Save to LearnCache".
+- `cookies` so Clerk can sync the browser extension session with the web app session.
 - `scripting` to read caption metadata from the active YouTube tab after you click the popup button.
 - `storage` for Clerk extension session support.
 - Host permission for your app URL.
+- Host permission for your Clerk sync host.
 - Host permission for `https://www.youtube.com/*` so the popup can capture captions from the tab you already have open.
 
 Avoid broad host permissions like `<all_urls>` unless you add features that genuinely need them.
@@ -108,6 +114,8 @@ CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://EXTENSION
 
 If Clerk shows a sign-in UI but sign-in fails, the most likely cause is that `chrome-extension://EXTENSION_ID` is missing from Clerk's allowed origins.
 
+Do not rely on Google OAuth inside the popup. Clerk does not support OAuth/SAML redirects directly in Chrome extensions. Sign in on the normal LearnCache web app tab, then reopen the extension popup. The extension syncs that web session through `clerkSyncHost`.
+
 ## Troubleshooting
 
 If the popup says:
@@ -121,4 +129,5 @@ the extension was built without the Clerk publishable key. Set `PLASMO_PUBLIC_CL
 If requests to the hosted app fail, check both sides:
 
 - `extension/local/config.json` includes your hosted app in `hostPermissions` before running `npm run build:local`.
+- `extension/local/config.json` includes `clerkSyncHost` and a matching host permission.
 - The hosted app has `CORS_ALLOWED_ORIGINS=https://learncache.example.com,chrome-extension://YOUR_EXTENSION_ID`.
