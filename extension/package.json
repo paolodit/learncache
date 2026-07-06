@@ -13,6 +13,7 @@
   "type": "module",
   "scripts": {
     "dev": "plasmo dev",
+    "setup": "node scripts/setup.mjs",
     "build": "plasmo build",
     "build:local": "node scripts/build-local.mjs",
     "package": "plasmo package"

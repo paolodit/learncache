@@ -10,7 +10,15 @@ The extension is the best YouTube capture path because it runs in the browser ta
 
 ## Setup
 
-Create a private local config:
+Fast path from the repo root:
+
+```powershell
+npm run setup:extension
+```
+
+The wizard asks for your LearnCache URL and extension API token, writes ignored local config, and builds the unpacked extension.
+
+Manual setup:
 
 ```powershell
 cd extension
@@ -52,6 +60,7 @@ Load `extension/build/chrome-mv3-prod` in Chrome extension developer mode.
 5. Load the extension from `extension/build/chrome-mv3-prod`.
 6. Add `chrome-extension://*` to hosted `CORS_ALLOWED_ORIGINS`.
 7. Restart the hosted app after env changes.
+8. Visit `/setup` in the hosted app and confirm the extension token and Chrome extension CORS checks pass.
 
 No Clerk setup is required.
 

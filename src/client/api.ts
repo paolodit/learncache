@@ -1,4 +1,4 @@
-import type { CreateItemResponse, ItemDetail, ItemStatus, ItemSummary, SourceType } from "../shared/types.js";
+import type { CreateItemResponse, ItemDetail, ItemStatus, ItemSummary, SetupStatus, SourceType } from "../shared/types.js";
 
 export interface AppConfig {
   appPublicUrl: string;
@@ -56,6 +56,10 @@ export async function getAppConfig(): Promise<AppConfig> {
 
 export async function getMe(): Promise<{ user: AppUser | null; authEnabled: boolean; authProvider: AppConfig["authProvider"] }> {
   return request<{ user: AppUser | null; authEnabled: boolean; authProvider: AppConfig["authProvider"] }>("/api/me");
+}
+
+export async function getSetupStatus(): Promise<SetupStatus> {
+  return request<SetupStatus>("/api/setup/status");
 }
 
 export async function loginWithPassword(password: string): Promise<{ user: AppUser; authEnabled: boolean; authProvider: AppConfig["authProvider"] }> {

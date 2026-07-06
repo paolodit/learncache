@@ -89,3 +89,39 @@ export interface CreateItemResponse {
   item: ItemSummary;
   duplicate: boolean;
 }
+
+export interface SetupStatus {
+  appPublicUrl: string;
+  dataDir: {
+    path: string;
+    writable: boolean;
+  };
+  auth: {
+    enabled: boolean;
+    provider: "none" | "password" | "clerk";
+    appPasswordConfigured: boolean;
+    sessionSecretConfigured: boolean;
+    extensionTokenConfigured: boolean;
+  };
+  cors: {
+    allowedOrigins: string[];
+    chromeExtensionWildcard: boolean;
+  };
+  ai: {
+    textProvider: AiTextProvider;
+    textProviderConfigured: boolean;
+    transcribeProvider: AiTranscribeProvider;
+    transcribeProviderConfigured: boolean;
+    supadataConfigured: boolean;
+    youtubeTranscriptProvider: "auto" | "yt-dlp" | "supadata";
+  };
+  tools: {
+    ytdlpAvailable: boolean;
+    ffmpegAvailable: boolean;
+  };
+  extensionConfigTemplate: {
+    appUrl: string;
+    extensionApiToken: string;
+    hostPermissions: string[];
+  };
+}

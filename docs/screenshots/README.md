@@ -4,8 +4,8 @@ Public screenshots should use local or sample data only.
 
 Suggested files:
 
-- `inbox.png`
-- `item-detail.png`
+- `learncache-app.png`
+- `learncache-extension-youtube.png`
 - `capture.png`
 - `mobile-capture.png`
 

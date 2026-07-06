@@ -7,6 +7,7 @@ import fastifyStatic from "@fastify/static";
 import { z } from "zod";
 import { config } from "./config.js";
 import { registerItemRoutes } from "./routes/items.js";
+import { registerSetupRoutes } from "./routes/setup.js";
 import { assertAuthConfiguration, clearPasswordSession, currentAppUser, requireAppAuth, setPasswordSession, validatePassword } from "./services/auth.js";
 
 export async function buildApp() {
@@ -77,6 +78,7 @@ export async function buildApp() {
   });
 
   await registerItemRoutes(app);
+  await registerSetupRoutes(app);
 
   const distPath = path.resolve(process.cwd(), "dist");
   if (fs.existsSync(distPath)) {

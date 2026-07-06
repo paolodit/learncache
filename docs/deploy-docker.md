@@ -77,6 +77,7 @@ The repo ignores `docker-compose.yml` and `docker-compose.*.yml` by default for 
 - **Coolify / Dokku / Portainer:** Deploy from the Dockerfile, mount `/data`, expose container port `80`, and set env vars in the provider UI.
 - **Fly.io / Railway / Render:** Use one instance only and attach persistent storage if the provider supports it. If persistent disks are awkward or unavailable, do not use SQLite there for anything you care about.
 - **CapRover:** See the [CapRover deployment example](deploy-caprover.md) for the provider-specific button-pushing version.
+- **Setup check:** After signing in, open `/setup` to check auth, extension CORS, AI providers, Supadata, media tools, and data persistence.
 
 ## Required Hosted Environment
 
@@ -141,7 +142,8 @@ Take backups before redeploying, changing AI providers, migrating hosts, or upgr
 
 1. Visit `https://learncache.example.com/api/health`.
 2. Sign in through the web app with `APP_PASSWORD`.
-3. Capture one captioned YouTube video.
-4. Confirm the item completes and shows a thumbnail/source card.
-5. Export Markdown, JSON, and ZIP.
-6. Restart or redeploy the container and confirm the item is still there.
+3. Visit `https://learncache.example.com/setup`.
+4. Capture one captioned YouTube video.
+5. Confirm the item completes and shows a thumbnail/source card.
+6. Export Markdown, JSON, and ZIP.
+7. Restart or redeploy the container and confirm the item is still there.

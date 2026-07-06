@@ -31,6 +31,7 @@ Tools like Glasp are useful, but the free tier can be tight if you want private 
 - Run with no auth locally, or protect hosted installs with a built-in password login and extension API token.
 - Capture from the web UI, `/capture`, PWA share target, or the optional desktop Chrome extension.
 - Avoid YouTube cookie-file setup for normal desktop capture when the open video exposes captions to the browser.
+- Check hosted readiness at `/setup` and copy a starter Chrome extension config from the app.
 
 ## Recommended Capture Order
 
@@ -148,7 +149,29 @@ SQLite works here as long as the app runs as a single instance and `/data` is pe
 
 This repo intentionally does not link to a public demo instance. LearnCache is for private archives, so public previews should be sanitized screenshots instead of live personal domains.
 
-Add screenshots under [docs/screenshots](docs/screenshots) when you are ready, using local/sample data only.
+![LearnCache item detail](docs/screenshots/learncache-app.png)
+
+![LearnCache Chrome extension on YouTube](docs/screenshots/learncache-extension-youtube.png)
+
+Screenshots live under [docs/screenshots](docs/screenshots) and should use local/sample data only.
+
+## Easier Hosted Extension Setup
+
+After your hosted app is deployed and you have signed in, open:
+
+```text
+https://learncache.example.com/setup
+```
+
+The setup page checks auth, CORS, AI provider keys, Supadata, media tools, and `/data` persistence. It also gives you a starter `extension/local/config.json`.
+
+You can create and build the local extension config with:
+
+```powershell
+npm run setup:extension
+```
+
+The wizard writes only to ignored local files and then builds `extension/build/chrome-mv3-prod` for Chrome's "Load unpacked" flow.
 
 ## Requirements
 
@@ -166,6 +189,7 @@ Add screenshots under [docs/screenshots](docs/screenshots) when you are ready, u
 - `npm start` runs the compiled production server.
 - `npm test` runs unit tests.
 - `npm run tools:install-ytdlp` installs `yt-dlp.exe` locally on Windows.
+- `npm run setup:extension` creates ignored extension config and builds the unpacked Chrome extension.
 
 ## Documentation
 
@@ -178,6 +202,7 @@ Add screenshots under [docs/screenshots](docs/screenshots) when you are ready, u
 - [Mobile capture and PWA sharing](docs/mobile-capture.md)
 - [Security and privacy](docs/security-and-privacy.md)
 - [Troubleshooting](docs/troubleshooting.md)
+- [Public release checklist](docs/public-release-checklist.md)
 
 ## Repo Layout
 

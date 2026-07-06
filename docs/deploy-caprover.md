@@ -92,6 +92,8 @@ Take backups before redeploys, host migrations, or model/provider experiments.
 
 1. Visit `https://learncache.example.com/api/health`.
 2. Sign in through the web app with `APP_PASSWORD`.
-3. Paste a captioned YouTube video.
-4. Confirm the item completes and survives a redeploy.
-5. Download ZIP export and confirm it contains `notes.md`, `item.json`, and thumbnail asset.
+3. Visit `https://learncache.example.com/setup` and confirm the checks that matter for your install.
+4. Run `npm run setup:extension` locally and load `extension/build/chrome-mv3-prod` in Chrome.
+5. Capture a captioned YouTube video with the extension.
+6. Confirm the item completes and survives a redeploy.
+7. Download ZIP export and confirm it contains `notes.md`, `item.json`, and thumbnail asset.

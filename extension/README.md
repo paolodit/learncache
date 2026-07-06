@@ -6,7 +6,19 @@ On YouTube watch pages, the popup first tries to capture available caption track
 
 ## Setup
 
-PowerShell:
+From the repo root, the easiest path is:
+
+```powershell
+npm run setup:extension
+```
+
+Or run the same wizard from this folder:
+
+```powershell
+npm run setup
+```
+
+Manual PowerShell setup:
 
 ```powershell
 npm install

@@ -2,6 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.js";
 import { getAppConfig, getMe, loginWithPassword, logout, type AppConfig, type AppUser } from "./api.js";
+import SetupPage from "./SetupPage.js";
 import "./styles.css";
 
 function Root() {
@@ -51,10 +52,13 @@ function Root() {
     );
   }
 
+  const isSetupPage = window.location.pathname.replace(/\/+$/, "") === "/setup";
+
   return (
     <>
       {config.authEnabled && (
         <div className="user-menu">
+          <a href={isSetupPage ? "/" : "/setup"}>{isSetupPage ? "Inbox" : "Setup"}</a>
           <button
             type="button"
             onClick={() => {
@@ -65,7 +69,7 @@ function Root() {
           </button>
         </div>
       )}
-      <App authEnabled={config.authEnabled} />
+      {isSetupPage ? <SetupPage /> : <App authEnabled={config.authEnabled} />}
     </>
   );
 }
